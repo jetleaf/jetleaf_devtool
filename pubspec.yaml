@@ -35,6 +35,7 @@ dependencies:
   jetleaf_core: ^1.0.1
   jetleaf_lang: ^1.0.1
   jetleaf_logging: ^1.0.1
+  jetleaf_utils: ^1.0.1
 
 dev_dependencies:
   test: ^1.25.0
