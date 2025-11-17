@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="jetleaf_devtool library API docs, for the Dart programming language.">
+  <title>jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li class="self-crumb">jetleaf_devtool.dart</li>
+  </ol>
+  <div class="self-name">jetleaf_devtool</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar=""
+    data-below-sidebar="jetleaf_devtool&#47;jetleaf_devtool-library-sidebar.html">
+  
+    <div>
+      
+
+      <h1>
+        <span class="kind-library">jetleaf_devtool</span>
+        library 
+ 
+
+      </h1>
+    </div>
+
+    
+<section class="desc markdown">
+  <p>JetLeaf Bootstrap — Public Library Interface</p>
+<p>This library exposes the primary APIs used for:</p>
+<ul>
+<li>Running JetLeaf CLI commands</li>
+<li>Executing the JetLeaf command runner</li>
+<li>Building and generating project artifacts</li>
+<li>Accessing code-generation and bootstrap support utilities</li>
+<li>Watching files and projects for changes</li>
+</ul>
+<p>Consumers can import this library to interact with JetLeaf’s
+build system, code generators, and project watchers.</p>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+      <dl>
+          <dt id="ApplicationCli">
+  <span class="name "><a href="../jetleaf_devtool/ApplicationCli-class.html">ApplicationCli</a></span> 
+
+</dt>
+<dd>
+  The <strong>central JetLeaf CLI entrypoint</strong> responsible for dispatching
+subcommands, handling global flags, and providing a consistent
+interface for interacting with the JetLeaf ecosystem.
+</dd>
+
+          <dt id="ApplicationFileWatcher">
+  <span class="name "><a href="../jetleaf_devtool/ApplicationFileWatcher-class.html">ApplicationFileWatcher</a></span> 
+
+</dt>
+<dd>
+  A concrete implementation of <a href="../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a> for monitoring file system changes
+within a project or directory.
+</dd>
+
+          <dt id="ApplicationProjectWatcher">
+  <span class="name "><a href="../jetleaf_devtool/ApplicationProjectWatcher-class.html">ApplicationProjectWatcher</a></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="Cli">
+  <span class="name "><a href="../jetleaf_devtool/Cli-class.html">Cli</a></span> 
+
+</dt>
+<dd>
+  The base contract for <strong>JetLeaf Command Line Interface (CLI)</strong> entry points.
+</dd>
+
+          <dt id="CommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a></span> 
+
+</dt>
+<dd>
+  A base contract for implementing <strong>JetLeaf CLI subcommands</strong>.
+</dd>
+
+          <dt id="CreatedFileEvent">
+  <span class="name "><a href="../jetleaf_devtool/CreatedFileEvent-class.html">CreatedFileEvent</a></span> 
+
+</dt>
+<dd>
+  Represents a <strong>file creation event</strong> within the JetLeaf ecosystem.
+</dd>
+
+          <dt id="DeletedFileEvent">
+  <span class="name "><a href="../jetleaf_devtool/DeletedFileEvent-class.html">DeletedFileEvent</a></span> 
+
+</dt>
+<dd>
+  Represents a <strong>file deletion event</strong> within the JetLeaf ecosystem.
+</dd>
+
+          <dt id="DevelopmentCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/DevelopmentCommandRunner-class.html">DevelopmentCommandRunner</a></span> 
+
+</dt>
+<dd>
+  Launches a JetLeaf application in <strong>development mode</strong>.
+</dd>
+
+          <dt id="FileEvent">
+  <span class="name "><a href="../jetleaf_devtool/FileEvent-class.html">FileEvent</a></span> 
+
+</dt>
+<dd>
+  Represents a <strong>generic file system event</strong> within the JetLeaf ecosystem.
+</dd>
+
+          <dt id="FileWatcher">
+  <span class="name "><a href="../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a></span> 
+
+</dt>
+<dd>
+  A contract for <strong>monitoring filesystem changes</strong> within a directory or project.
+</dd>
+
+          <dt id="FormatSupport">
+  <span class="name "><a href="../jetleaf_devtool/FormatSupport-class.html">FormatSupport</a></span> 
+
+</dt>
+<dd>
+  A base class for project builders that need to generate formatted
+source code for Dart projects.
+</dd>
+
+          <dt id="GenerativeSupport">
+  <span class="name "><a href="../jetleaf_devtool/GenerativeSupport-class.html">GenerativeSupport</a></span> 
+
+</dt>
+<dd>
+  Provides the core code-generation utilities used during JetLeaf’s bootstrap
+build process.
+</dd>
+
+          <dt id="HelpCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/HelpCommandRunner-class.html">HelpCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A built-in CLI subcommand that displays contextual help information
+for available <strong>JetLeaf CLI</strong> commands.
+</dd>
+
+          <dt id="HotReloadCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/HotReloadCommandRunner-class.html">HotReloadCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A command runner that triggers a <strong>manual hot-reload</strong> of the currently
+running JetLeaf development application.
+</dd>
+
+          <dt id="ImportSupport">
+  <span class="name "><a href="../jetleaf_devtool/ImportSupport-class.html">ImportSupport</a></span> 
+
+</dt>
+<dd>
+  A base class for project builders that need to generate formatted
+source code for Dart projects.
+</dd>
+
+          <dt id="InfoCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/InfoCommandRunner-class.html">InfoCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A JetLeaf CLI command that displays comprehensive information about
+the current JetLeaf project and its environment.
+</dd>
+
+          <dt id="ModifiedFileEvent">
+  <span class="name "><a href="../jetleaf_devtool/ModifiedFileEvent-class.html">ModifiedFileEvent</a></span> 
+
+</dt>
+<dd>
+  Represents a <strong>file modification event</strong> within the JetLeaf ecosystem.
+</dd>
+
+          <dt id="PackageSupport">
+  <span class="name "><a href="../jetleaf_devtool/PackageSupport-class.html">PackageSupport</a></span> 
+
+</dt>
+<dd>
+  A specialized project builder that provides utilities for resolving
+Dart source files to <code>package:</code> URIs within a project.
+</dd>
+
+          <dt id="PauseCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/PauseCommandRunner-class.html">PauseCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A command runner that <strong>pauses the currently running JetLeaf application</strong>
+during development.
+</dd>
+
+          <dt id="ProductionCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/ProductionCommandRunner-class.html">ProductionCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A CLI command responsible for building a JetLeaf application in <strong>production mode</strong>.
+</dd>
+
+          <dt id="Project">
+  <span class="name "><a href="../jetleaf_devtool/Project-class.html">Project</a></span> 
+
+</dt>
+<dd>
+  Base interface representing a <strong>software project artifact</strong>.
+</dd>
+
+          <dt id="ProjectBuilder">
+  <span class="name "><a href="../jetleaf_devtool/ProjectBuilder-class.html">ProjectBuilder</a></span> 
+
+</dt>
+<dd>
+  Base interface for <strong>building project artifacts</strong> in the JetLeaf ecosystem.
+</dd>
+
+          <dt id="ProjectWatcher">
+  <span class="name "><a href="../jetleaf_devtool/ProjectWatcher-class.html">ProjectWatcher</a></span> 
+
+</dt>
+<dd>
+  Defines the contract for <strong>development-time project monitoring</strong>, enabling
+hot-reload, hot-restart, and dynamic rebuild flows within a JetLeaf
+application.
+</dd>
+
+          <dt id="ProxyCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/ProxyCommandRunner-class.html">ProxyCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A CLI command responsible for generating <strong>proxy subclasses</strong> for runtime
+method interception within the JetLeaf framework.
+</dd>
+
+          <dt id="RenamedFileEvent">
+  <span class="name "><a href="../jetleaf_devtool/RenamedFileEvent-class.html">RenamedFileEvent</a></span> 
+
+</dt>
+<dd>
+  Represents a <strong>file rename event</strong> within the JetLeaf ecosystem.
+</dd>
+
+          <dt id="Support">
+  <span class="name "><a href="../jetleaf_devtool/Support-class.html">Support</a></span> 
+
+</dt>
+<dd>
+  Core project builder support utilities for the JetLeaf framework.
+</dd>
+
+          <dt id="VersionCommandRunner">
+  <span class="name "><a href="../jetleaf_devtool/VersionCommandRunner-class.html">VersionCommandRunner</a></span> 
+
+</dt>
+<dd>
+  A built-in CLI subcommand that displays the current <strong>JetLeaf CLI</strong>
+and related tooling version.
+</dd>
+
+          <dt id="WritingSupport">
+  <span class="name "><a href="../jetleaf_devtool/WritingSupport-class.html">WritingSupport</a></span> 
+
+</dt>
+<dd>
+  Base class for JetLeaf project builders that generate and write
+source code files, including imports, bootstrap main functions, and headers.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+
+
+    <section class="summary offset-anchor" id="functions">
+      <h2>Functions</h2>
+      <dl class="callables">
+          <dt id="getRunningVersion" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/getRunningVersion.html">getRunningVersion</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Retrieves the current version of the JetLeaf CLI.
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="typedefs">
+      <h2>Typedefs</h2>
+      <dl>
+          
+  <dt id="FileEventHandler" class="callable">
+    <span class="name"><a href="../jetleaf_devtool/FileEventHandler.html">FileEventHandler</a></span><span class="signature">
+      <span class="returntype parameter">= <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span> Function<span class="signature">(<span class="parameter" id="param-event"><span class="type-annotation"><a href="../jetleaf_devtool/FileEvent-class.html">FileEvent</a></span> <span class="parameter-name">event</span></span>)</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    Signature for handling file events triggered by a <a href="../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a>.
+    
+
+  </dd>
+
+          
+  <dt id="OnFilesLoaded" class="callable">
+    <span class="name"><a href="../jetleaf_devtool/OnFilesLoaded.html">OnFilesLoaded</a></span><span class="signature">
+      <span class="returntype parameter">= void Function<span class="signature">(<span class="parameter" id="param-files"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span> <span class="parameter-name">files</span></span>)</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    A callback invoked when a list of <a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a> objects has been loaded.
+    
+
+  </dd>
+
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li class="self-crumb">jetleaf_devtool.dart</li>
+</ol>
+
+    <h5><span class="package-name">jetleaf_devtool</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../jetleaf_devtool/">jetleaf_devtool</a></li>
+      <li><a href="../proxy_builder/">proxy_builder</a></li>
+      <li><a href="../proxy_generator/">proxy_generator</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>jetleaf_devtool library</h5>
+  </div><!--/sidebar-offcanvas-right-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

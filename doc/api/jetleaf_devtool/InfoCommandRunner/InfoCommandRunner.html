@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the InfoCommandRunner.new constructor from Class InfoCommandRunner from the jetleaf_devtool library, for the Dart programming language.">
+  <title>InfoCommandRunner.new constructor - InfoCommandRunner - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/InfoCommandRunner-class.html">InfoCommandRunner</a></li>
+    <li class="self-crumb">InfoCommandRunner.new const constructor</li>
+  </ol>
+  <div class="self-name">InfoCommandRunner.new</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="jetleaf_devtool&#47;InfoCommandRunner-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">InfoCommandRunner</span> constructor 
+</h1></div>
+
+    <section class="multi-line-signature">
+      const
+      <span class="name ">InfoCommandRunner</span>(<wbr>)
+    </section>
+    
+<section class="desc markdown">
+  <p>Creates a new <a href="../../jetleaf_devtool/InfoCommandRunner-class.html">InfoCommandRunner</a> instance.</p>
+<p>This command runner can be invoked through the JetLeaf CLI using
+the <code>jl --info</code> command. It does not require any arguments and is
+safe to execute in read-only contexts.</p>
+<p>A JetLeaf CLI command that displays comprehensive information about
+the current JetLeaf project and its environment.</p>
+<p>The <a href="../../jetleaf_devtool/InfoCommandRunner-class.html">InfoCommandRunner</a> provides a user-friendly summary of project
+metadata, framework versions, and dependency information by parsing
+the local <code>pubspec.yaml</code>. It is designed to help developers quickly
+verify their JetLeaf setup, dependency health, and installed framework
+version without manually inspecting configuration files.</p>
+<h3 id="overview">Overview</h3>
+<p>When executed, this command:</p>
+<ol>
+<li>Reads the <code>pubspec.yaml</code> file in the current directory.</li>
+<li>Parses the project metadata, including name, description, version,
+and repository links.</li>
+<li>Displays information about the JetLeaf framework in use — including
+the declared and installed versions.</li>
+<li>Identifies other JetLeaf-related dependencies within the project.</li>
+</ol>
+<p>Output is formatted in visually boxed sections for clarity and
+terminal readability.</p>
+<h3 id="example-usage">Example Usage</h3>
+<pre class="language-bash"><code class="language-bash"># Run from a JetLeaf project root
+jl --info
+
+# Example Output:
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 📋 PROJECT INFORMATION                                                     │
+│                                                                            │
+│   Name               : my_jetleaf_app                                      │
+│   Description        : A sample JetLeaf application.                       │
+│   Version            : 1.2.0                                               │
+│   Repository         : https://github.com/org/my_jetleaf_app               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 🚀 JETLEAF FRAMEWORK                                                       │
+│                                                                            │
+│   Version in pubspec  : ^0.9.0                                            │
+│   Installed version   : 0.9.2                                             │
+│                                                                            │
+│   Other JetLeaf packages:                                                 │
+│     • jetleaf_ui: ^0.9.0                                                  │
+│     • jetleaf_router: ^0.8.1                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="behavior">Behavior</h3>
+<ul>
+<li>If no <code>pubspec.yaml</code> is found in the current directory, an error is
+logged and the command exits gracefully.</li>
+<li>If parsing fails (e.g., due to invalid YAML), a detailed error message
+is displayed with contextual hints.</li>
+<li>The command supports standard JetLeaf CLI logging through <code>CliLogger</code>.</li>
+</ul>
+<h3 id="references">References</h3>
+<ul>
+<li><a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> — Base class for JetLeaf command executors.</li>
+<li><code>CliLogger</code> — Provides structured output for CLI operations.</li>
+<li><a href="https://pub.dev/documentation/jetleaf_utils/1.0.1/utils/YamlParser-class.html">YamlParser</a> — Used to parse the <code>pubspec.yaml</code> file content.</li>
+<li><code>JetLeafVersion</code> — Provides runtime framework version lookup.</li>
+<li><code>cliSession</code> — Contextual session used to obtain command-scoped loggers.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">const InfoCommandRunner();</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/InfoCommandRunner-class.html">InfoCommandRunner</a></li>
+    <li class="self-crumb">InfoCommandRunner.new const constructor</li>
+</ol>
+
+    <h5>InfoCommandRunner class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

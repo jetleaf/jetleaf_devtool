@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the findAndGenerateImports method from the ImportSupport class, for the Dart programming language.">
+  <title>findAndGenerateImports method - ImportSupport class - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/ImportSupport-class.html">ImportSupport</a></li>
+    <li class="self-crumb">findAndGenerateImports method</li>
+  </ol>
+  <div class="self-name">findAndGenerateImports</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="jetleaf_devtool&#47;ImportSupport-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">findAndGenerateImports</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://pub.dev/documentation/meta/1.17.0/meta/protected-constant.html">protected</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+<span class="name ">findAndGenerateImports</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="findAndGenerateImports-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-mainEntryFile"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span> <span class="parameter-name">mainEntryFile</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-excludes"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">excludes</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-includes"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">includes</span>, </span></li>
+<li><span class="parameter" id="findAndGenerateImports-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span>, </span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Scans the project for Dart source files and generates a list of import
+statements required for the runtime bootstrap file.</p>
+<p>This method leverages <a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a> and <a href="../../jetleaf_devtool/ImportSupport/generateImports.html">generateImports</a> to:</p>
+<ol>
+<li>Recursively discover all relevant Dart files within <code>project</code>.</li>
+<li>Generate structured <code>import</code> directives for those files.</li>
+<li>Return the finalized set of imports to be injected into the
+generated bootstrap entrypoint.</li>
+</ol>
+<p>If no imports are generated (e.g., due to delayed build setup or file
+resolution issues), the method automatically retries by invoking itself
+recursively until valid imports are found. This ensures that transient
+initialization delays (e.g., missing <code>.dart_tool</code> files) do not result
+in incomplete bootstrap code.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final imports = await findAndGenerateImports(logger, projectDir, mainFile, 'my_app');
+print('Generated ${imports.length} import statements.');
+</code></pre>
+<p>Parameters:</p>
+<ul>
+<li><code>logger</code>: A <code>CliLogger</code> used for informational, warning, and error output.</li>
+<li><code>project</code>: The project’s root directory to search for Dart files.</li>
+<li><code>mainEntryFile</code>: The detected main entrypoint file for the application.</li>
+<li><code>packageName</code>: The current package’s name (used to build proper import URIs).</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>A <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a> resolving to a <a href="https://api.dart.dev/stable/3.9.2/dart-core/Set-class.html">Set</a> of generated import strings.</li>
+</ul>
+<p>Throws:</p>
+<ul>
+<li>Any uncaught file or configuration error encountered during scanning.</li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li>The search skips test, tool, build, and analyzer directories by default.</li>
+<li>Recursion continues until at least one valid import is detected.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@protected
+Future&lt;Set&lt;String&gt;&gt; findAndGenerateImports(CliLogger logger, Directory project, File mainEntryFile, String packageName, List&lt;String&gt; excludes, List&lt;String&gt; includes, FileUtility fileUtils) async {
+  final spinner = Spinner(&#39;🔍 Generating imports for $packageName...&#39;);
+  spinner.start();
+
+  final files = await fileUtils.findDartFiles(project);
+  final generatedImports = await generateImports(mainEntryFile, packageName, logger, files.toList(), project, fileUtils);
+
+  if (generatedImports.isEmpty) {
+    return await findAndGenerateImports(logger, project, mainEntryFile, packageName, excludes, includes, fileUtils);
+  }
+
+  spinner.stop(successMessage: &#39;Generated imports for $packageName with ${generatedImports.length} imports.&#39;);
+
+  return generatedImports;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/ImportSupport-class.html">ImportSupport</a></li>
+    <li class="self-crumb">findAndGenerateImports method</li>
+</ol>
+
+    <h5>ImportSupport class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

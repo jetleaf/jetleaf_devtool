@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the GenerativeSupport class from the jetleaf_devtool library, for the Dart programming language.">
+  <title>GenerativeSupport class - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li><a href="../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li class="self-crumb">GenerativeSupport class</li>
+  </ol>
+  <div class="self-name">GenerativeSupport</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="jetleaf_devtool&#47;jetleaf_devtool-library-sidebar.html"
+    data-below-sidebar="jetleaf_devtool&#47;GenerativeSupport-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">GenerativeSupport</span> class 
+    <a href="https://dart.dev/language/class-modifiers#abstract" class="feature feature-abstract" title="This type can not be directly constructed.">abstract</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Provides the core code-generation utilities used during JetLeaf’s bootstrap
+build process.</p>
+<p><code>GenerativeSupport</code> is responsible for transforming <em>runtime resources</em> and
+<em>package metadata</em> into statically generated Dart wrapper classes that JetLeaf
+can load reflectively at runtime. It extends <a href="../jetleaf_devtool/WritingSupport-class.html">WritingSupport</a>, inheriting
+file-system utilities and string helpers used by the generator.</p>
+<h1 id="responsibilities">Responsibilities</h1>
+<p><code>GenerativeSupport</code> implements the two major phases of JetLeaf’s build
+pipeline:</p>
+<h2 id="1-asset-embedding-generateandwriteassets">1. Asset Embedding (<code>generateAndWriteAssets</code>)</h2>
+<p>Scans a target package for all non-Dart resource files:</p>
+<ul>
+<li>HTML templates</li>
+<li>JSON/YAML/TOML configuration files</li>
+<li>Static web assets (CSS, JS)</li>
+<li>Images, binaries, misc files</li>
+</ul>
+<p>Each discovered resource is converted into a <strong>strongly typed</strong>
+<code>GenerativeAsset</code> subclass containing:</p>
+<ul>
+<li>The asset’s file path</li>
+<li>The asset’s file name</li>
+<li>The originating package name</li>
+<li>A literal <code>Uint8List</code> representing the file’s raw bytes</li>
+<li>A <strong>zero-argument constructor</strong>, required for runtime mirror instantiation</li>
+</ul>
+<p>Asset classes are emitted into:</p>
+<pre class="language-text"><code class="language-text">&lt;buildDir&gt;/jetleaf_generated/assets/*.dart
+</code></pre>
+<p>JetLeaf’s runtime bootstrapper then discovers these classes via mirrors and
+registers them as available embedded assets.</p>
+<h2 id="2-package-metadata-embedding-generateandwritepackages">2. Package Metadata Embedding (<code>generateAndWritePackages</code>)</h2>
+<p>Reads <code>.dart_tool/package_graph.json</code> and emits a <code>GenerativePackage</code> class
+for every package found in the graph—including transitive dependencies.</p>
+<p>Generated classes contain:</p>
+<ul>
+<li>Package name</li>
+<li>Package version</li>
+<li>Language version</li>
+<li>Whether it is the root package</li>
+<li>File system path</li>
+<li>Root URI</li>
+<li>A <strong>zero-argument constructor</strong> for reflective instantiation</li>
+</ul>
+<p>Package classes are emitted into:</p>
+<pre class="language-text"><code class="language-text">&lt;buildDir&gt;/jetleaf_generated/packages/*.dart
+</code></pre>
+<p>These classes are later used by JetLeaf tooling and runtime systems to
+introspect dependencies without re-parsing the project’s <code>.dart_tool</code>
+metadata.</p>
+<h1 id="naming--sanitization-helpers">Naming &amp; Sanitization Helpers</h1>
+<p>The class also provides:</p>
+<ul>
+<li>
+<p><code>`sanitizePackageName`</code> — normalizes any package name into a valid Dart
+PascalCase identifier.</p>
+</li>
+<li>
+<p><code>`sanitizeFileName`</code> — extracts the base file name, strips extensions,
+removes invalid characters, and converts it into PascalCase.</p>
+</li>
+</ul>
+<p>These helpers ensure that generated class names:</p>
+<ul>
+<li>are always valid Dart identifiers</li>
+<li>never start with a number</li>
+<li>contain no punctuation or symbols</li>
+<li>remain deterministic across builds</li>
+</ul>
+<h1 id="spinner-integration">Spinner Integration</h1>
+<p>Both generation methods display a CLI spinner to provide real-time feedback
+during long-running IO operations:</p>
+<ul>
+<li>Start messages (e.g., “🔍 Embedding assets…”)</li>
+<li>Success messages including output path and counts</li>
+<li>Informational messages when nothing is generated</li>
+</ul>
+<p>This improves user experience in JetLeaf’s bootstrap command-line flow.</p>
+<h1 id="error-handling">Error Handling</h1>
+<ul>
+<li>Missing assets or empty dependency graphs are treated as valid states—no
+errors are thrown.</li>
+<li>File writing errors or IO exceptions are allowed to bubble up, so the
+calling build system can surface them properly.</li>
+<li>Metadata extraction is delegated entirely to <a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a>; no silent
+corrections occur.</li>
+</ul>
+<h1 id="usage">Usage</h1>
+<p>This class is used internally by:</p>
+<ul>
+<li>JetLeaf Bootstrap Generator</li>
+<li>JetLeaf CLI (<code>jetleaf create</code>, <code>jetleaf build</code>, etc.)</li>
+</ul>
+<p>It is <strong>not</strong> intended for direct consumption by application developers.
+Instead, they benefit from the generated wrappers indirectly when
+JetLeaf loads assets and package metadata at runtime.</p>
+<h1 id="extension-points">Extension Points</h1>
+<p>Tooling authors may extend <code>GenerativeSupport</code> to customize:</p>
+<ul>
+<li>additional resource formats</li>
+<li>different output directory structures</li>
+<li>alternative generation templates</li>
+</ul>
+<p>The class is designed to be flexible but is <strong>not</strong> meant to be modified
+by end-users of the JetLeaf framework.</p>
+<h1 id="summary">Summary</h1>
+<p><code>GenerativeSupport</code> is the backbone of JetLeaf’s compile-time resource and
+metadata embedding system. It converts dynamic files and package metadata
+into static Dart code that JetLeaf can load at runtime via mirrors—enabling
+predictable, reflection-safe, and high-performance access to resources
+without requiring them to remain on disk.</p>
+<p>This class should only be invoked by JetLeaf’s internal build processes and
+is not part of the public API surface.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object-class.html">Object</a></li>
+        <li><a href="../jetleaf_devtool/Support-class.html">Support</a></li>
+        <li><a href="../jetleaf_devtool/PackageSupport-class.html">PackageSupport</a></li>
+        <li><a href="../jetleaf_devtool/FormatSupport-class.html">FormatSupport</a></li>
+        <li><a href="../jetleaf_devtool/ImportSupport-class.html">ImportSupport</a></li>
+        <li><a href="../jetleaf_devtool/WritingSupport-class.html">WritingSupport</a></li>
+      <li>GenerativeSupport</li>
+    </ul>
+  </dd>
+
+        
+        
+
+          <dt>Implementers</dt>
+          <dd><ul class="comma-separated clazz-relationships">
+              <li><a href="../jetleaf_devtool/ApplicationProjectWatcher-class.html">ApplicationProjectWatcher</a></li>
+          </ul></dd>
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="GenerativeSupport.new" class="callable">
+          <span class="name"><a href="../jetleaf_devtool/GenerativeSupport/GenerativeSupport.html">GenerativeSupport.new</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Provides the core code-generation utilities used during JetLeaf’s bootstrap
+build process.
+            <div class="constructor-modifier features">const</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="buildEntryAlias" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/ImportSupport/buildEntryAlias.html">buildEntryAlias</a></span><span class="signature">(<wbr><span class="parameter" id="buildEntryAlias-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Builds a unique alias for the generated entry library of a package.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="buildImportAlias" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/ImportSupport/buildImportAlias.html">buildImportAlias</a></span><span class="signature">(<wbr><span class="parameter" id="buildImportAlias-param-importPath"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">importPath</span>, {</span><span class="parameter" id="buildImportAlias-param-used"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">used</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Build a safe import alias from an import path.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="findAndGenerateImports" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/ImportSupport/findAndGenerateImports.html">findAndGenerateImports</a></span><span class="signature">(<wbr><span class="parameter" id="findAndGenerateImports-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, </span><span class="parameter" id="findAndGenerateImports-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span><span class="parameter" id="findAndGenerateImports-param-mainEntryFile"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span> <span class="parameter-name">mainEntryFile</span>, </span><span class="parameter" id="findAndGenerateImports-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span><span class="parameter" id="findAndGenerateImports-param-excludes"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">excludes</span>, </span><span class="parameter" id="findAndGenerateImports-param-includes"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">includes</span>, </span><span class="parameter" id="findAndGenerateImports-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Scans the project for Dart source files and generates a list of import
+statements required for the runtime bootstrap file.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="formatArgs" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/FormatSupport/formatArgs.html">formatArgs</a></span><span class="signature">(<wbr><span class="parameter" id="formatArgs-param-args"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">args</span>, [</span><span class="parameter" id="formatArgs-param-inlineLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/int-class.html">int</a></span> <span class="parameter-name">inlineLimit</span> = <span class="default-value">6</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Formats a list of command-line <code>args</code> into a Dart list literal string.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="formatBytes" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/FormatSupport/formatBytes.html">formatBytes</a></span><span class="signature">(<wbr><span class="parameter" id="formatBytes-param-bytes"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/int-class.html">int</a></span> <span class="parameter-name">bytes</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Converts a byte count into a human-readable string using standard
+binary prefixes (B, KB, MB).
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="formatDirs" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/FormatSupport/formatDirs.html">formatDirs</a></span><span class="signature">(<wbr><span class="parameter" id="formatDirs-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span><span class="parameter" id="formatDirs-param-directories"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">directories</span>, [</span><span class="parameter" id="formatDirs-param-inlineLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/int-class.html">int</a></span> <span class="parameter-name">inlineLimit</span> = <span class="default-value">1</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Formats a list of directory paths as <code>File</code> objects in Dart code.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="generateAndWriteAssets" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/GenerativeSupport/generateAndWriteAssets.html">generateAndWriteAssets</a></span><span class="signature">(<wbr><span class="parameter" id="generateAndWriteAssets-param-targetPath"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">targetPath</span>, </span><span class="parameter" id="generateAndWriteAssets-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span><span class="parameter" id="generateAndWriteAssets-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span>, </span><span class="parameter" id="generateAndWriteAssets-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Discovers all non-Dart resource files in the target package and generates
+strongly-typed Dart wrapper classes (<code>GenerativeAsset</code>) for each of them.
+  
+
+</dd>
+
+        <dt id="generateAndWritePackages" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/GenerativeSupport/generateAndWritePackages.html">generateAndWritePackages</a></span><span class="signature">(<wbr><span class="parameter" id="generateAndWritePackages-param-targetPath"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">targetPath</span>, </span><span class="parameter" id="generateAndWritePackages-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span><span class="parameter" id="generateAndWritePackages-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span>, </span><span class="parameter" id="generateAndWritePackages-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Discovers all Dart packages listed in the project's package graph and
+generates strongly-typed Dart metadata wrappers (<code>GenerativePackage</code>) for
+each one.
+  
+
+</dd>
+
+        <dt id="generateImports" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/ImportSupport/generateImports.html">generateImports</a></span><span class="signature">(<wbr><span class="parameter" id="generateImports-param-mainEntryFile"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span> <span class="parameter-name">mainEntryFile</span>, </span><span class="parameter" id="generateImports-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span><span class="parameter" id="generateImports-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, </span><span class="parameter" id="generateImports-param-files"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span> <span class="parameter-name">files</span>, </span><span class="parameter" id="generateImports-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span><span class="parameter" id="generateImports-param-utils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">utils</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Scans all discovered Dart source files and generates a set of valid
+<code>package:</code> import URIs for inclusion in the runtime bootstrap file.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="resolveToPackageUri" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/PackageSupport/resolveToPackageUri.html">resolveToPackageUri</a></span><span class="signature">(<wbr><span class="parameter" id="resolveToPackageUri-param-absoluteFilePath"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">absoluteFilePath</span>, </span><span class="parameter" id="resolveToPackageUri-param-currentPackageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">currentPackageName</span>, </span><span class="parameter" id="resolveToPackageUri-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span><span class="parameter" id="resolveToPackageUri-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a>?</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Resolves an absolute file path to a <code>package:</code> URI if it belongs
+to the current project's <code>lib/</code> directory.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="sanitizeFileName" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/GenerativeSupport/sanitizeFileName.html">sanitizeFileName</a></span><span class="signature">(<wbr><span class="parameter" id="sanitizeFileName-param-fileName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">fileName</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Sanitizes a file name to be used as part of a Dart class name.
+Converts to PascalCase and removes invalid characters.
+  
+
+</dd>
+
+        <dt id="sanitizePackageName" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/GenerativeSupport/sanitizePackageName.html">sanitizePackageName</a></span><span class="signature">(<wbr><span class="parameter" id="sanitizePackageName-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Sanitizes a package name to be used as part of a Dart class name.
+Converts to PascalCase and removes invalid characters.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="writeHeader" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/WritingSupport/writeHeader.html">writeHeader</a></span><span class="signature">(<wbr><span class="parameter" id="writeHeader-param-buffer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a></span> <span class="parameter-name">buffer</span>, </span><span class="parameter" id="writeHeader-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span><span class="parameter" id="writeHeader-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, [</span><span class="parameter" id="writeHeader-param-info"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">info</span> = <span class="default-value">&quot;bootstrap entry&quot;</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Writes the standardized JetLeaf auto-generated file header into the given
+<a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a>, including ASCII branding, metadata, and copyright notice.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="writeImports" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/WritingSupport/writeImports.html">writeImports</a></span><span class="signature">(<wbr><span class="parameter" id="writeImports-param-buffer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a></span> <span class="parameter-name">buffer</span>, </span><span class="parameter" id="writeImports-param-generatedImports"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">generatedImports</span>, {</span><span class="parameter" id="writeImports-param-aliased"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">aliased</span> = <span class="default-value">true</span></span>})
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Writes structured and sorted <code>import</code> statements into the provided
+<a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a> for code generation.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="writeMainFunction" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/WritingSupport/writeMainFunction.html">writeMainFunction</a></span><span class="signature">(<wbr><span class="parameter" id="writeMainFunction-param-buffer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a></span> <span class="parameter-name">buffer</span>, </span><span class="parameter" id="writeMainFunction-param-packageName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">packageName</span>, </span><span class="parameter" id="writeMainFunction-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, </span><span class="parameter" id="writeMainFunction-param-args"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">args</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Writes the main entry function into the provided <code>buffer</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="writeTarget" class="callable inherited">
+  <span class="name"><a href="../jetleaf_devtool/WritingSupport/writeTarget.html">writeTarget</a></span><span class="signature">(<wbr><span class="parameter" id="writeTarget-param-target"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span> <span class="parameter-name">target</span>, </span><span class="parameter" id="writeTarget-param-buffer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/StringBuffer-class.html">StringBuffer</a></span> <span class="parameter-name">buffer</span>, </span><span class="parameter" id="writeTarget-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Writes the contents of <code>buffer</code> to the specified <code>target</code> file.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li><a href="../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li class="self-crumb">GenerativeSupport class</li>
+</ol>
+
+    <h5>jetleaf_devtool library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

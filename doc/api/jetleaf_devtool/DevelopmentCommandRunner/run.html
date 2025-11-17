@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the run method from the DevelopmentCommandRunner class, for the Dart programming language.">
+  <title>run method - DevelopmentCommandRunner class - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/DevelopmentCommandRunner-class.html">DevelopmentCommandRunner</a></li>
+    <li class="self-crumb">run method</li>
+  </ol>
+  <div class="self-name">run</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="jetleaf_devtool&#47;DevelopmentCommandRunner-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">run</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.dart.dev/stable/3.9.2/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">run</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="run-param-args"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">args</span></span></li>
+</ol>)
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Entry point for executing the JetLeaf CLI process.</p>
+<ul>
+<li><code>args</code>: The command-line arguments passed by the user.</li>
+</ul>
+<p>Implementations should perform initialization, argument parsing,
+and dispatch the request to an appropriate <a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a>.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await run(['build', '--release']);
+</code></pre>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+Future&lt;void&gt; run(List&lt;String&gt; args) async {
+  final stopWatch = Stopwatch()..start();
+  final project = Directory.current;
+  final buildFolder = &#39;build&#39;;
+
+  try {
+    Set&lt;File&gt; dartFiles = {};
+    File mainEntryFile = await _getEntryFile(args, logger, project, dartFiles.addAll);
+    final packageName = await _readPkgName(logger, project);
+
+    &#47;&#47; ------------------------------------------------------------
+    &#47;&#47; 🧩 STEP 1: Proxy generation + proxy entrypoint execution
+    &#47;&#47; ------------------------------------------------------------
+    await _runBuildRunner(project, logger);
+
+    &#47;&#47; ------------------------------------------------------------
+    &#47;&#47; 🛠️ STEP 2: Development builder
+    &#47;&#47; ------------------------------------------------------------
+    final entrypoint = p.join(project.path, Constant.JETLEAF_GENERATED_DIR_NAME, &#39;${packageName}_entry.dart&#39;);
+
+    String excluded = _getArgValue(args, [&#39;--exclude&#39;, &#39;-ed&#39;]) ?? &#39;&#39;;
+    String included = _getArgValue(args, [&#39;--include&#39;, &#39;-in&#39;]) ?? &#39;&#39;;
+    List&lt;String&gt; excludeDirs = excluded.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(excluded);
+    List&lt;String&gt; includeDirs = included.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(included);
+
+    &#47;&#47; 🔹 Ask for excluded directories if none provided
+    if (excludeDirs.isEmpty &amp;&amp; prompt.getBool(&#39;Any directories to exclude from scanning?&#39;, defaultsTo: false)) {
+      excludeDirs = StringUtils.commaDelimitedListToStringList(
+        prompt.get(&#39;Enter comma-separated directories to exclude (e.g., &quot;temp,dist&quot;)&#39;, defaultsTo: &#39;&#39;),
+      );
+    }
+
+    &#47;&#47; 🔹 Ask for included directories if none provided
+    if (includeDirs.isEmpty &amp;&amp; prompt.getBool(&#39;Any directories to include from scanning?&#39;, defaultsTo: false)) {
+      includeDirs = StringUtils.commaDelimitedListToStringList(
+        prompt.get(&#39;Enter comma-separated directories to include (e.g., &quot;src,lib&quot;)&#39;, defaultsTo: &#39;&#39;),
+      );
+    }
+
+    final autoRebuild = bool.tryParse(_getArgValue(args, [&#39;--watch&#39;, &#39;-w&#39;]) ?? &quot;false&quot;);
+
+    &#47;&#47; 🔹 Run JetLeaf bootstrap code generator
+    final config = RuntimeScannerConfiguration(
+      skipTests: true,
+      reload: true,
+      packagesToScan: [...includeDirs],
+      writeDeclarationsToFiles: true,
+      outputPath: &#39;$buildFolder&#47;generated&#39;,
+      packagesToExclude: [
+        &#39;collection&#39;,
+        &#39;analyzer&#39;,
+        &quot;r:.*&#47;example&#47;.*&quot;,
+        &quot;r:.*&#47;test&#47;.*&quot;,
+        &quot;r:.*&#47;tool&#47;.*&quot;,
+        &quot;r:.*&#47;benchmark&#47;.*&quot;,
+        &quot;r:.*&#47;.dart_tool&#47;.*&quot;,
+        &quot;r:.*&#47;build&#47;.*&quot;,
+        ...excludeDirs
+      ],
+      filesToExclude: excludeDirs.filter((e) =&gt; e.isNotEmpty).map((exclude) =&gt; File(p.isAbsolute(exclude.trim()) ? exclude.trim() : p.join(project.path, exclude.trim()))).toList(),
+    );
+    FileUtility fileUtils = FileUtility(logger.info, logger.warn, logger.error, config, true);
+
+    await fileUtils.scanAllDependenciesForDartFiles(
+      dartFiles,
+      config.filesToScan.map((f) =&gt; f.path).toSet(),
+      config.filesToExclude.map((f) =&gt; f.path).toSet()
+    );
+
+    final builder = DevelopmentProjectBuilder(File(entrypoint));
+    args.add(CliConstant.DEV_FLAG);
+    final result = await builder.build(this, mainEntryFile, packageName, dartFiles.toList(), fileUtils, project, args);
+
+    print(&#39;&#39;&#39;
+🍃 JetLeaf Development Summary
+────────────────────────────────────────────────────────
+
+📂 Target File:              ${p.normalize(entrypoint)}
+🧠 Entry Point Found:        ${mainEntryFile.path}
+📦 Package:                  $packageName
+
+📊 Generation Stats:\n${_buildGenerationStats(dartFiles.toList(), excludeDirs, includeDirs, result.getMetrics())}
+
+✅ Development Status:         SUCCESS
+ ✔ Bootstrap generated in ${stopWatch.elapsedMilliseconds}ms
+
+🚀 Next:
+• Open ${p.normalize(entrypoint)} to view the generated bootstrap.
+• The application will start automatically.
+
+────────────────────────────────────────────────────────
+🔧 Powered by JetLeaf — the Dart backend engine 🍃
+&#39;&#39;&#39;);
+
+    &#47;&#47; ------------------------------------------------------------
+    &#47;&#47; 🚀 STEP 3: Run generated development entrypoint
+    &#47;&#47; ------------------------------------------------------------
+    logger.info(&#39;🚀 Starting JetLeaf incremental development VM...&#39;);
+
+    if (Platform.isWindows) {
+      await Process.run(&#39;cls&#39;, [], runInShell: true);
+    } else {
+      stdout.write(&#39;\x1B[2J\x1B[0;0H&#39;);
+    }
+
+    final outputDill = p.join(project.path, buildFolder, &#39;snapshot.dill&#39;);
+    final platformDill = p.join(
+      p.dirname(p.dirname(Platform.resolvedExecutable)),
+      &#39;lib&#39;,
+      &#39;_internal&#39;,
+      &#39;vm_platform_strong.dill&#39;,
+    );
+
+    final frontend = await FrontendServerClient.start(
+      &#39;org-dartlang-root:&#47;&#47;&#47;$entrypoint&#39;,
+      outputDill,
+      platformDill,
+      target: &#39;vm&#39;,
+      fileSystemRoots: [project.path],
+      fileSystemScheme: &#39;org-dartlang-root&#39;,
+      verbose: false,
+    );
+    frontendClient = frontend;
+
+    logger.info(&#39;🔧 Compiling project...&#39;);
+    CompileResult compilation = await frontend.compile();
+    compilationResult = compilation;
+    frontend.accept();
+
+    final compiledDill = compilation.dillOutput;
+    if (compiledDill != null) {
+      logger.info(&#39;📦 Snapshot ready at: $compiledDill&#39;);
+      logger.info(&#39;🚀 Launching VM...&#39;);
+
+      final vmReady = Completer&lt;VmService&gt;();
+      final vmProcess = await Process.start(
+        Platform.resolvedExecutable,
+        [
+          &#39;--enable-vm-service=0&#39;, &#47;&#47; random port
+          compiledDill,
+        ],
+        workingDirectory: project.path,
+      );
+
+      vmProcess.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((line) {
+          print(line);
+
+          if (line.contains(&#39;Observatory listening on&#39;)) {
+            final wsUri = &#39;${line.split(&#39; &#39;).last.replaceFirst(&#39;http&#39;, &#39;ws&#39;).replaceFirst(&#39;&#47;ws&#39;, &#39;&#39;)}ws&#39;;
+            vmReady.complete(vmServiceConnectUri(wsUri));
+          }
+      });
+
+      vmProcess.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen(stderr.writeln);
+      final vmService = await vmReady.future;
+      await _watcher.watch(vmService, File(entrypoint), autoRebuild ?? false, project, logger);
+      logger.info(&#39;🛰️ VM Service connected → Hot reload ready&#39;);
+
+      final exit = await vmProcess.exitCode;
+      logger.info(&#39;🏁 Application exited ($exit)&#39;);
+    } else {
+      logger.error(&#39;🏁 Application exited ${compilation.errorCount}&#39;);
+    }
+  } catch (e, st) {
+    logger.error(&#39;❌ Failed to launch development mode: $e&#39;);
+    logger.error(st.toString());
+  } finally {
+    Directory(p.join(project.path, buildFolder)).deleteSync(recursive: true);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/DevelopmentCommandRunner-class.html">DevelopmentCommandRunner</a></li>
+    <li class="self-crumb">run method</li>
+</ol>
+
+    <h5>DevelopmentCommandRunner class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

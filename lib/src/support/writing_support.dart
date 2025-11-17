@@ -1,0 +1,256 @@
+// ---------------------------------------------------------------------------
+// 🍃 JetLeaf Framework - https://jetleaf.hapnium.com
+//
+// Copyright © 2025 Hapnium & JetLeaf Contributors. All rights reserved.
+//
+// This source file is part of the JetLeaf Framework and is protected
+// under copyright law. You may not copy, modify, or distribute this file
+// except in compliance with the JetLeaf license.
+//
+// For licensing terms, see the LICENSE file in the root of this project.
+// ---------------------------------------------------------------------------
+// 
+// 🔧 Powered by Hapnium — the Dart backend engine 🍃
+
+part of 'support.dart';
+
+/// {@template writing_support}
+/// Base class for JetLeaf project builders that generate and write
+/// source code files, including imports, bootstrap main functions, and headers.
+///
+/// This class extends [ImportSupport] and adds writing-specific
+/// capabilities such as:
+/// - Writing formatted and aliased Dart `import` statements.
+/// - Generating a standardized `main` entry function for the JetLeaf application.
+/// - Writing output buffers to disk files with directory creation support.
+/// - Adding auto-generated JetLeaf headers for branding and metadata.
+///
+/// Typical usage involves:
+/// 1. Generating import URIs with [writeImports].
+/// 2. Writing the main entry function using [writeMainFunction].
+/// 3. Writing the output buffer to a target file via [writeTarget].
+/// 4. Optionally, adding a JetLeaf auto-generated header with [writeHeader].
+///
+/// This class is intended for internal JetLeaf code generation tasks and
+/// is usually extended by concrete builders that implement project-specific
+/// logic for runtime bootstrapping.
+/// {@endtemplate}
+abstract class WritingSupport extends ImportSupport {
+  /// {@macro writing_support}
+  const WritingSupport();
+
+  /// Writes structured and sorted `import` statements into the provided
+  /// [StringBuffer] for code generation.
+  ///
+  /// This function ensures all necessary Dart and package imports — including
+  /// user-defined, JetLeaf core, and dynamically generated ones — are organized
+  /// and formatted in a clean, deterministic order before the runtime
+  /// bootstrap file is written.
+  ///
+  /// Import ordering rules:
+  /// 1. All `dart:` imports are written first (alphabetically).
+  /// 2. A blank line separates system imports from `package:` imports.
+  /// 3. Generated package imports receive unique aliases (e.g., `pkg_example`)
+  ///    to avoid name collisions.
+  /// 4. The user’s main entry file import is always written last as:
+  ///    ```dart
+  ///    import '<packageUri>' as user_main_lib;
+  ///    ```
+  ///
+  /// Example:
+  /// ```dart
+  /// final buffer = StringBuffer();
+  /// _writeImports(buffer, 'package:my_app/main.dart', [
+  ///   'package:my_app/src/services/api_service.dart',
+  ///   'package:my_app/src/models/user.dart',
+  /// ]);
+  /// print(buffer.toString());
+  /// ```
+  ///
+  /// Output:
+  /// ```dart
+  /// import 'dart:io';
+  ///
+  /// import 'package:jetleaf/jetleaf.dart';
+  /// import 'package:jetleaf_lang/lang.dart';
+  /// import 'package:my_app/src/models/user.dart' as pkg_user;
+  /// import 'package:my_app/src/services/api_service.dart' as pkg_api_service;
+  ///
+  /// import 'package:my_app/main.dart' as user_main_lib;
+  /// ```
+  ///
+  /// Parameters:
+  /// - [buffer]: The output buffer where formatted imports are written.
+  /// - [packageUri]: The URI of the user’s main library (usually the entry file).
+  /// - [generatedImports]: A list of discovered or auto-generated import URIs.
+  ///
+  /// Notes:
+  /// - Duplicate imports are automatically deduplicated using a `Set`.
+  /// - Generated imports receive safe alias names derived from their file names.
+  /// - Default JetLeaf core libraries are always included automatically.
+  @protected
+  void writeImports(StringBuffer buffer, Iterable<String> generatedImports, {bool aliased = true}) {
+    final spinner = Spinner('🔍 Writing import statements of length ${generatedImports.length}...');
+    spinner.start();
+
+    // All imports including user main
+    final imports = generatedImports.toSet();
+
+    // Split into dart: imports and others
+    final dartImports = imports.where((i) => i.startsWith('dart:')).toList()..sort();
+    final packageImports = imports.where((i) => !i.startsWith('dart:')).toList()..sort();
+
+    // Write dart: imports first
+    for (final i in dartImports) {
+      buffer.writeln("import '$i';");
+    }
+
+    if (dartImports.isNotEmpty && packageImports.isNotEmpty) {
+      buffer.writeln(); // blank line between dart: and package:
+    }
+
+    // Write package imports with aliases for generated imports
+    for (final i in packageImports) {
+      if (generatedImports.contains(i)) {
+        // Generate a safe alias like pkg_example
+        buffer.writeln("import '$i'${aliased ? ' as ${buildImportAlias(i)}' : ''};");
+      } else {
+        buffer.writeln("import '$i';");
+      }
+    }
+
+    buffer.writeln();
+
+    spinner.stop(successMessage: '✅ Done writing ${generatedImports.length} import statements.');
+  }
+
+  /// Writes the main entry function into the provided [buffer].
+  ///
+  /// This generates a `main` function that serves as the bootstrap for a
+  /// JetLeaf application. It delegates execution to the user’s main entry
+  /// library, passing along any provided command-line [args].
+  ///
+  /// The generated `main` function is asynchronous and includes comments
+  /// explaining its purpose.
+  ///
+  /// Example output for `packageName = 'my_app'` and `args = ['--watch']`:
+  /// ```dart
+  /// /// The entry point for the JetLeaf application.
+  /// Future<void> main() async {
+  ///   // -------------------------------------------------------------------------
+  ///   // Call the user's main function
+  ///   // -------------------------------------------------------------------------
+  ///   // Pass all arguments received by this bootstrap to the user's main entry point.
+  ///   my_app_entry_library.main(['--watch']);
+  /// }
+  /// ```
+  @protected
+  void writeMainFunction(StringBuffer buffer, String packageName, CliLogger logger, List<String> args) {
+    final spinner = Spinner('🔍 Writing main function entry for $packageName...');
+    spinner.start();
+
+    final argsLiteral = formatArgs(args);
+
+    buffer.writeln('''
+/// The entry point for the JetLeaf application.
+Future<void> main() async {
+  // -------------------------------------------------------------------------
+  // Call the user's main function
+  // -------------------------------------------------------------------------
+  // Pass all arguments received by this bootstrap to the user's main entry point.
+  ${buildEntryAlias(packageName)}.main($argsLiteral);
+}
+  ''');
+
+    spinner.stop();
+    logger.info("✅ Done writing the main function for $packageName");
+  }
+
+  /// Writes the contents of [buffer] to the specified [target] file.
+  ///
+  /// Ensures that the parent directories exist by creating them recursively.
+  /// This method is asynchronous and guarantees that the file content is fully
+  /// written before completing.
+  ///
+  /// Example:
+  /// ```dart
+  /// final buffer = StringBuffer();
+  /// writeMainFunction(buffer, 'my_app', ['--watch']);
+  /// await writeTarget(File('build/bootstrap.dart'), buffer);
+  /// ```
+  /// This will create `build/bootstrap.dart` with the generated main function.
+  @protected
+  Future<void> writeTarget(File target, StringBuffer buffer, CliLogger logger) async {
+    final spinner = Spinner('🔍 Writing generated buffer to ${target.path}...');
+    spinner.start();
+
+    final result = buffer.toString();
+    result.trim();
+
+    await target.parent.create(recursive: true);
+    await target.writeAsString(result);
+
+    spinner.stop();
+    logger.info("✅ Done writing generated buffer to ${target.path}");
+  }
+
+  /// Writes the standardized JetLeaf auto-generated file header into the given
+  /// [StringBuffer], including ASCII branding, metadata, and copyright notice.
+  ///
+  /// This header is appended at the top of every generated bootstrap file,
+  /// clearly identifying the file as part of the JetLeaf framework's
+  /// code generation process.
+  ///
+  /// The header includes:
+  /// - ASCII-styled JetLeaf logo and branding 🍃
+  /// - License and copyright information
+  /// - Framework versioning notes
+  /// - “Do not edit manually” disclaimer
+  ///
+  /// Parameters:
+  /// - [buffer]: The [StringBuffer] to write the header into.
+  /// - [packageName]: The target Dart package being bootstrapped.
+  @protected
+  void writeHeader(StringBuffer buffer, String packageName, CliLogger logger, [String info = "bootstrap entry"]) {
+    final spinner = Spinner('🔍 Writing header for $packageName...');
+    spinner.start();
+
+    // ASCII art as raw string
+    const asciiArt = r'''
+// 🍃      _      _   _                __  ______  
+// 🍃     | | ___| |_| |    ___  __ _ / _| \ \ \ \ 
+// 🍃  _  | |/ _ \ __| |   / _ \/ _` | |_   \ \ \ \
+// 🍃 | |_| |  __/ |_| |__|  __/ (_| |  _|  / / / /
+// 🍃  \___/ \___|\__|_____\___|\__,_|_|   /_/_/_/ 
+// 🍃
+''';
+
+  buffer.writeln('''
+// ignore_for_file: unused_import, depend_on_referenced_packages, duplicate_import, deprecated_member_use, unnecessary_import
+//
+${asciiArt.trim()}
+//
+// AUTO-GENERATED $info for [$packageName] package
+// Do not edit manually.
+//
+// ---------------------------------------------------------------------------
+// JetLeaf Framework 🍃
+//
+// Copyright (c) ${DateTime.now().year} Hapnium & JetLeaf Contributors
+//
+// Licensed under the MIT License. See LICENSE file in the root of the jetleaf project
+//
+// This file is part of the JetLeaf Framework, a modern, modular backend
+// framework for Dart.
+//
+// For documentation and usage, visit:
+// https://jetleaf.hapnium.com/docs
+// ---------------------------------------------------------------------------
+// 
+// 🔧 Powered by Hapnium — the Dart backend engine 🍃
+''');
+
+    spinner.stop();
+    logger.info("✅ Done writing header for $packageName");
+  }
+}

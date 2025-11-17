@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the ApplicationCli.new constructor from Class ApplicationCli from the jetleaf_devtool library, for the Dart programming language.">
+  <title>ApplicationCli.new constructor - ApplicationCli - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/ApplicationCli-class.html">ApplicationCli</a></li>
+    <li class="self-crumb">ApplicationCli.new const constructor</li>
+  </ol>
+  <div class="self-name">ApplicationCli.new</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="jetleaf_devtool&#47;ApplicationCli-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">ApplicationCli</span> constructor 
+</h1></div>
+
+    <section class="multi-line-signature">
+      const
+      <span class="name ">ApplicationCli</span>(<wbr>)
+    </section>
+    
+<section class="desc markdown">
+  <p>The <strong>central JetLeaf CLI entrypoint</strong> responsible for dispatching
+subcommands, handling global flags, and providing a consistent
+interface for interacting with the JetLeaf ecosystem.</p>
+<p>This class implements <a href="../../jetleaf_devtool/Cli-class.html">Cli</a> and can be invoked via:</p>
+<pre class="language-bash"><code class="language-bash">dart run jetleaf_cli &lt;command&gt; [options]
+</code></pre>
+<p>or from a compiled binary:</p>
+<pre class="language-bash"><code class="language-bash">./jl &lt;command&gt; [options]
+</code></pre>
+<h3 id="responsibilities">Responsibilities</h3>
+<ol>
+<li><strong>Display the CLI header and branding</strong>
+<ul>
+<li>Shows JetLeaf CLI version, website, and helpful tips.</li>
+</ul>
+</li>
+<li><strong>Global flag handling</strong>
+<ul>
+<li>Recognizes <code>--version</code> / <code>-v</code> to display CLI version.</li>
+<li>Recognizes <code>--help</code> / <code>-h</code> or empty arguments to show help.</li>
+</ul>
+</li>
+<li><strong>Command dispatch</strong>
+<ul>
+<li>Resolves the subcommand using <a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> instances.</li>
+<li>Passes remaining arguments to the command runner.</li>
+</ul>
+</li>
+<li><strong>Error handling and guidance</strong>
+<ul>
+<li>Handles unknown commands gracefully.</li>
+<li>Prompts the user to show available commands if an unknown command is used.</li>
+</ul>
+</li>
+<li><strong>Exit codes</strong>
+<ul>
+<li>Returns <code>0</code> for successful execution.</li>
+<li>Returns <code>1</code> for unknown commands or fatal errors.</li>
+</ul>
+</li>
+</ol>
+<h3 id="execution-flow">Execution Flow</h3>
+<pre class="language-text"><code class="language-text">┌─────────────────────────────┐
+│  ApplicationCli.run(args)   │
+└─────────────────────────────┘
+           │
+           ▼
+  Display CLI header (version, tips)
+           │
+           ▼
+  Check for global flags (--help, --version)
+           │
+           ├─&gt; --version? → VersionCommandRunner.run(args)
+           │
+           ├─&gt; --help / empty? → HelpCommandRunner.run(args)
+           │
+           ▼
+  Extract command name and arguments
+           │
+           ▼
+  Resolve [CommandRunner] for the given command
+           │
+           ├─&gt; Found → commandRunner.run(commandArgs)
+           │
+           └─&gt; Not Found → Log error, prompt for help, exit(1)
+</code></pre>
+<h3 id="example-usage">Example Usage</h3>
+<pre class="language-bash"><code class="language-bash"># Show general help
+jl --help
+
+# Show version
+jl --version
+
+# Run development server
+jl dev --entry lib/main.dart --watch
+
+# Run production build
+jl prod --entry lib/main.dart
+</code></pre>
+<h3 id="integration-with-commandrunner">Integration with CommandRunner</h3>
+<p>Each subcommand implements <a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> and provides:</p>
+<ul>
+<li><code>command</code> – the CLI keyword for the command.</li>
+<li><code>description</code> – a human-readable explanation.</li>
+<li><code>usage</code> – a full usage string including options and examples.</li>
+<li><code>run(List&lt;String&gt; args)</code> – executes the command logic.</li>
+</ul>
+<p><code>ApplicationCli</code> locates the appropriate <a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> and
+forwards the relevant arguments while handling global concerns
+such as help, version, and error reporting.</p>
+<h3 id="notes">Notes</h3>
+<ul>
+<li>This CLI entrypoint is synchronous in terms of initialization
+but asynchronous for actual command execution via <code>Future</code>.</li>
+<li>Supports prompt-driven interactions if a command requires
+missing information (e.g., entry files, directories).</li>
+<li>Uses a consistent <code>CliLogger</code> session for CLI output, errors,
+warnings, and informational messages.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">const ApplicationCli();</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/ApplicationCli-class.html">ApplicationCli</a></li>
+    <li class="self-crumb">ApplicationCli.new const constructor</li>
+</ol>
+
+    <h5>ApplicationCli class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

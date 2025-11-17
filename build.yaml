@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      jetleaf_devtool|proxy_builder:
+        generate_for:
+          - lib/**
+          - package:**
+
+builders:
+  proxy_builder:
+    import: "package:jetleaf_devtool/proxy_builder.dart"
+    builder_factories: ["proxyBuilder"]
+    build_extensions: {".dart": [".proxy.dart"]}
+    auto_apply: all_packages
+    build_to: cache
+    runs_before: []

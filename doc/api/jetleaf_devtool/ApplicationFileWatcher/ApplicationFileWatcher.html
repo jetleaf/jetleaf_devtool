@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the ApplicationFileWatcher.new constructor from Class ApplicationFileWatcher from the jetleaf_devtool library, for the Dart programming language.">
+  <title>ApplicationFileWatcher.new constructor - ApplicationFileWatcher - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/ApplicationFileWatcher-class.html">ApplicationFileWatcher</a></li>
+    <li class="self-crumb">ApplicationFileWatcher.new constructor</li>
+  </ol>
+  <div class="self-name">ApplicationFileWatcher.new</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="jetleaf_devtool&#47;ApplicationFileWatcher-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">ApplicationFileWatcher</span> constructor 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+      <span class="name ">ApplicationFileWatcher</span>(<wbr>)
+    </section>
+    
+<section class="desc markdown">
+  <p>Constructs a new <a href="../../jetleaf_devtool/ApplicationFileWatcher-class.html">ApplicationFileWatcher</a> instance.</p>
+<p>Automatically detects the project root directory by searching for
+<code>pubspec.yaml</code>. Defaults to <a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory/current.html">Directory.current</a> if not found.</p>
+<p>A concrete implementation of <a href="../../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a> for monitoring file system changes
+within a project or directory.</p>
+<p>The <code>ApplicationFileWatcher</code> observes a root directory and detects:</p>
+<ul>
+<li>Newly created files</li>
+<li>Modified files</li>
+<li>Deleted files</li>
+<li>Renamed files</li>
+</ul>
+<h3 id="features">Features</h3>
+<ol>
+<li>
+<p><strong>Automatic Project Root Detection</strong></p>
+<ul>
+<li>By default, the watcher attempts to locate the project root by
+searching for the nearest <code>pubspec.yaml</code> starting from <a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory/current.html">Directory.current</a>.</li>
+<li>If no <code>pubspec.yaml</code> is found, the current directory is used.</li>
+</ul>
+</li>
+<li>
+<p><strong>Include and Exclude Filters</strong></p>
+<ul>
+<li>Uses <a href="../../jetleaf_devtool/ApplicationFileWatcher/includePatterns.html">includePatterns</a> to allow only files matching certain extensions or paths.</li>
+<li>Uses <a href="../../jetleaf_devtool/ApplicationFileWatcher/excludePatterns.html">excludePatterns</a> to ignore build directories, lock files, or system files.</li>
+<li>Filters are RegExp-based for maximum flexibility.</li>
+</ul>
+</li>
+<li>
+<p><strong>Debounced Event Delivery</strong></p>
+<ul>
+<li>Avoids flooding with events when multiple rapid changes occur.</li>
+<li>The <a href="../../jetleaf_devtool/ApplicationFileWatcher/debounceDuration.html">debounceDuration</a> defines the minimum interval between event emissions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Change Tracking</strong></p>
+<ul>
+<li>Maintains internal lists of created, modified, deleted, and renamed files.</li>
+<li>Lists are available through <a href="../../jetleaf_devtool/ApplicationFileWatcher/getCreatedFiles.html">getCreatedFiles</a>, <a href="../../jetleaf_devtool/ApplicationFileWatcher/getModifiedFiles.html">getModifiedFiles</a>,
+<a href="../../jetleaf_devtool/ApplicationFileWatcher/getDeletedFiles.html">getDeletedFiles</a>, and <a href="../../jetleaf_devtool/ApplicationFileWatcher/getRenamedFiles.html">getRenamedFiles</a>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="usage">Usage</h3>
+<pre class="language-dart"><code class="language-dart">final watcher = ApplicationFileWatcher();
+
+await watcher.start((event) {
+  if (event is CreatedFileEvent) {
+    print('File created: ${event.getSource().path}');
+  } else if (event is ModifiedFileEvent) {
+    print('File modified: ${event.getSource().path}');
+  }
+});
+
+// Stop watching when done
+await watcher.stop();
+</code></pre>
+<h3 id="customization">Customization</h3>
+<pre class="language-dart"><code class="language-dart">watcher.debounceDuration = Duration(milliseconds: 500);
+watcher.includePatterns = [RegExp(r'\.dart$')];
+watcher.excludePatterns = [RegExp(r'[/\\](build|.git)[/\\]?')];
+</code></pre>
+<h3 id="implementation-notes">Implementation Notes</h3>
+<ul>
+<li>Uses <a href="https://api.dart.dev/stable/3.9.2/dart-io/FileSystemEntity/watch.html">Directory.watch</a> internally for cross-platform file system notifications.</li>
+<li>Events are buffered and debounced to prevent duplicate notifications.</li>
+<li>Renamed files are tracked if the underlying <a href="https://api.dart.dev/stable/3.9.2/dart-io/FileSystemMoveEvent-class.html">FileSystemMoveEvent</a> provides
+an <code>oldPath</code>.</li>
+<li>Includes utility <code>_isRelevant</code> to match files against include/exclude patterns.</li>
+<li><code>_flushBuffer</code> ensures only the latest event per file path is delivered after debouncing.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">ApplicationFileWatcher() {
+  root = _findProjectRoot(Directory.current) ?? Directory.current;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/ApplicationFileWatcher-class.html">ApplicationFileWatcher</a></li>
+    <li class="self-crumb">ApplicationFileWatcher.new constructor</li>
+</ol>
+
+    <h5>ApplicationFileWatcher class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

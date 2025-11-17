@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the GenerativeSupport.new constructor from Class GenerativeSupport from the jetleaf_devtool library, for the Dart programming language.">
+  <title>GenerativeSupport.new constructor - GenerativeSupport - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/GenerativeSupport-class.html">GenerativeSupport</a></li>
+    <li class="self-crumb">GenerativeSupport.new const constructor</li>
+  </ol>
+  <div class="self-name">GenerativeSupport.new</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="jetleaf_devtool&#47;GenerativeSupport-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">GenerativeSupport</span> constructor 
+</h1></div>
+
+    <section class="multi-line-signature">
+      const
+      <span class="name ">GenerativeSupport</span>(<wbr>)
+    </section>
+    
+<section class="desc markdown">
+  <p>Provides the core code-generation utilities used during JetLeaf’s bootstrap
+build process.</p>
+<p><code>GenerativeSupport</code> is responsible for transforming <em>runtime resources</em> and
+<em>package metadata</em> into statically generated Dart wrapper classes that JetLeaf
+can load reflectively at runtime. It extends <a href="../../jetleaf_devtool/WritingSupport-class.html">WritingSupport</a>, inheriting
+file-system utilities and string helpers used by the generator.</p>
+<h1 id="responsibilities">Responsibilities</h1>
+<p><code>GenerativeSupport</code> implements the two major phases of JetLeaf’s build
+pipeline:</p>
+<h2 id="1-asset-embedding-generateandwriteassets">1. Asset Embedding (<code>generateAndWriteAssets</code>)</h2>
+<p>Scans a target package for all non-Dart resource files:</p>
+<ul>
+<li>HTML templates</li>
+<li>JSON/YAML/TOML configuration files</li>
+<li>Static web assets (CSS, JS)</li>
+<li>Images, binaries, misc files</li>
+</ul>
+<p>Each discovered resource is converted into a <strong>strongly typed</strong>
+<code>GenerativeAsset</code> subclass containing:</p>
+<ul>
+<li>The asset’s file path</li>
+<li>The asset’s file name</li>
+<li>The originating package name</li>
+<li>A literal <code>Uint8List</code> representing the file’s raw bytes</li>
+<li>A <strong>zero-argument constructor</strong>, required for runtime mirror instantiation</li>
+</ul>
+<p>Asset classes are emitted into:</p>
+<pre class="language-text"><code class="language-text">&lt;buildDir&gt;/jetleaf_generated/assets/*.dart
+</code></pre>
+<p>JetLeaf’s runtime bootstrapper then discovers these classes via mirrors and
+registers them as available embedded assets.</p>
+<h2 id="2-package-metadata-embedding-generateandwritepackages">2. Package Metadata Embedding (<code>generateAndWritePackages</code>)</h2>
+<p>Reads <code>.dart_tool/package_graph.json</code> and emits a <code>GenerativePackage</code> class
+for every package found in the graph—including transitive dependencies.</p>
+<p>Generated classes contain:</p>
+<ul>
+<li>Package name</li>
+<li>Package version</li>
+<li>Language version</li>
+<li>Whether it is the root package</li>
+<li>File system path</li>
+<li>Root URI</li>
+<li>A <strong>zero-argument constructor</strong> for reflective instantiation</li>
+</ul>
+<p>Package classes are emitted into:</p>
+<pre class="language-text"><code class="language-text">&lt;buildDir&gt;/jetleaf_generated/packages/*.dart
+</code></pre>
+<p>These classes are later used by JetLeaf tooling and runtime systems to
+introspect dependencies without re-parsing the project’s <code>.dart_tool</code>
+metadata.</p>
+<h1 id="naming--sanitization-helpers">Naming &amp; Sanitization Helpers</h1>
+<p>The class also provides:</p>
+<ul>
+<li>
+<p><code>`sanitizePackageName`</code> — normalizes any package name into a valid Dart
+PascalCase identifier.</p>
+</li>
+<li>
+<p><code>`sanitizeFileName`</code> — extracts the base file name, strips extensions,
+removes invalid characters, and converts it into PascalCase.</p>
+</li>
+</ul>
+<p>These helpers ensure that generated class names:</p>
+<ul>
+<li>are always valid Dart identifiers</li>
+<li>never start with a number</li>
+<li>contain no punctuation or symbols</li>
+<li>remain deterministic across builds</li>
+</ul>
+<h1 id="spinner-integration">Spinner Integration</h1>
+<p>Both generation methods display a CLI spinner to provide real-time feedback
+during long-running IO operations:</p>
+<ul>
+<li>Start messages (e.g., “🔍 Embedding assets…”)</li>
+<li>Success messages including output path and counts</li>
+<li>Informational messages when nothing is generated</li>
+</ul>
+<p>This improves user experience in JetLeaf’s bootstrap command-line flow.</p>
+<h1 id="error-handling">Error Handling</h1>
+<ul>
+<li>Missing assets or empty dependency graphs are treated as valid states—no
+errors are thrown.</li>
+<li>File writing errors or IO exceptions are allowed to bubble up, so the
+calling build system can surface them properly.</li>
+<li>Metadata extraction is delegated entirely to <a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a>; no silent
+corrections occur.</li>
+</ul>
+<h1 id="usage">Usage</h1>
+<p>This class is used internally by:</p>
+<ul>
+<li>JetLeaf Bootstrap Generator</li>
+<li>JetLeaf CLI (<code>jetleaf create</code>, <code>jetleaf build</code>, etc.)</li>
+</ul>
+<p>It is <strong>not</strong> intended for direct consumption by application developers.
+Instead, they benefit from the generated wrappers indirectly when
+JetLeaf loads assets and package metadata at runtime.</p>
+<h1 id="extension-points">Extension Points</h1>
+<p>Tooling authors may extend <code>GenerativeSupport</code> to customize:</p>
+<ul>
+<li>additional resource formats</li>
+<li>different output directory structures</li>
+<li>alternative generation templates</li>
+</ul>
+<p>The class is designed to be flexible but is <strong>not</strong> meant to be modified
+by end-users of the JetLeaf framework.</p>
+<h1 id="summary">Summary</h1>
+<p><code>GenerativeSupport</code> is the backbone of JetLeaf’s compile-time resource and
+metadata embedding system. It converts dynamic files and package metadata
+into static Dart code that JetLeaf can load at runtime via mirrors—enabling
+predictable, reflection-safe, and high-performance access to resources
+without requiring them to remain on disk.</p>
+<p>This class should only be invoked by JetLeaf’s internal build processes and
+is not part of the public API surface.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">const GenerativeSupport();</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/GenerativeSupport-class.html">GenerativeSupport</a></li>
+    <li class="self-crumb">GenerativeSupport.new const constructor</li>
+</ol>
+
+    <h5>GenerativeSupport class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

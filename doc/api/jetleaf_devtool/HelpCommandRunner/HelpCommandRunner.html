@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the HelpCommandRunner.new constructor from Class HelpCommandRunner from the jetleaf_devtool library, for the Dart programming language.">
+  <title>HelpCommandRunner.new constructor - HelpCommandRunner - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/HelpCommandRunner-class.html">HelpCommandRunner</a></li>
+    <li class="self-crumb">HelpCommandRunner.new const constructor</li>
+  </ol>
+  <div class="self-name">HelpCommandRunner.new</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="jetleaf_devtool&#47;HelpCommandRunner-class-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-constructor">HelpCommandRunner</span> constructor 
+</h1></div>
+
+    <section class="multi-line-signature">
+      const
+      <span class="name ">HelpCommandRunner</span>(<wbr>)
+    </section>
+    
+<section class="desc markdown">
+  <p>Creates a new instance of the <code>--help</code> command runner.</p>
+<p>A built-in CLI subcommand that displays contextual help information
+for available <strong>JetLeaf CLI</strong> commands.</p>
+<p>The <code>HelpCommandRunner</code> serves as the entry point for <code>jl --help</code> or
+<code>jl -h</code>, providing formatted usage information, command descriptions,
+and guidance on how to use each registered subcommand.</p>
+<h3 id="behavior">Behavior</h3>
+<ol>
+<li>
+<p><strong>General Help</strong></p>
+<ul>
+<li>When invoked without arguments, it displays a summary of all
+registered CLI commands, including their descriptions and usage
+syntax.</li>
+</ul>
+</li>
+<li>
+<p><strong>Command-Specific Help</strong></p>
+<ul>
+<li>When a command name is provided (e.g., <code>jl build --help</code>),
+this runner locates the associated <a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> and prints its
+detailed usage message.</li>
+</ul>
+</li>
+<li>
+<p><strong>Error Handling</strong></p>
+<ul>
+<li>If an unknown command is provided, the runner logs an error and
+displays the general help screen.</li>
+</ul>
+</li>
+</ol>
+<h3 id="output-formatting">Output Formatting</h3>
+<p>Each registered subcommand’s usage information is rendered inside a
+decorative ASCII box for better readability:</p>
+<pre class="language-text"><code class="language-text">┌────────────────────────────────────────────────────────────────────────────┐
+│ Usage: jl --version                                                       │
+│                                                                            │
+│ Description:                                                               │
+│   Displays the current version of the JL CLI and related tooling.          │
+└────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<p>The output automatically wraps long lines to maintain consistent
+alignment within an 80-character box width.</p>
+<h3 id="example">Example</h3>
+<pre class="language-bash"><code class="language-bash">$ jl --help
+🍃 JetLeaf CLI - Command Line Interface
+
+Available Commands:
+  ┌────────────────────────────────────────────────────────────────────────┐
+  │ Usage: jl dev                                                          │
+  │ Description: Starts JetLeaf in development mode.                       │
+  └────────────────────────────────────────────────────────────────────────┘
+
+Run "jl &lt;command&gt; --help" for more information on a specific command.
+</code></pre>
+<h3 id="extensibility">Extensibility</h3>
+<p>To include custom command runners in this help system, simply extend
+<a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> and add your runner to the static <code>_runners</code> list.</p>
+<h3 id="see-also">See Also</h3>
+<ul>
+<li><a href="../../jetleaf_devtool/CommandRunner-class.html">CommandRunner</a> — Base contract for JetLeaf CLI commands.</li>
+<li><code>CliLogger</code> — Structured logging API used for CLI diagnostics.</li>
+<li><a href="../../jetleaf_devtool/VersionCommandRunner-class.html">VersionCommandRunner</a> — Companion command for displaying CLI version.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">const HelpCommandRunner();</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/HelpCommandRunner-class.html">HelpCommandRunner</a></li>
+    <li class="self-crumb">HelpCommandRunner.new const constructor</li>
+</ol>
+
+    <h5>HelpCommandRunner class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

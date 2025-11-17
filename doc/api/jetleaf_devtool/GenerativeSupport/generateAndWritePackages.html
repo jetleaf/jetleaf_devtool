@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the generateAndWritePackages method from the GenerativeSupport class, for the Dart programming language.">
+  <title>generateAndWritePackages method - GenerativeSupport class - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li><a href="../../jetleaf_devtool/GenerativeSupport-class.html">GenerativeSupport</a></li>
+    <li class="self-crumb">generateAndWritePackages method</li>
+  </ol>
+  <div class="self-name">generateAndWritePackages</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="jetleaf_devtool&#47;GenerativeSupport-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">generateAndWritePackages</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://pub.dev/documentation/meta/1.17.0/meta/protected-constant.html">protected</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>&gt;</span></span>
+<span class="name ">generateAndWritePackages</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="generateAndWritePackages-param-targetPath"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">targetPath</span>, </span></li>
+<li><span class="parameter" id="generateAndWritePackages-param-project"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span> <span class="parameter-name">project</span>, </span></li>
+<li><span class="parameter" id="generateAndWritePackages-param-fileUtils"><span class="type-annotation"><a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a></span> <span class="parameter-name">fileUtils</span>, </span></li>
+<li><span class="parameter" id="generateAndWritePackages-param-logger"><span class="type-annotation">CliLogger</span> <span class="parameter-name">logger</span>, </span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Discovers all Dart packages listed in the project's package graph and
+generates strongly-typed Dart metadata wrappers (<code>GenerativePackage</code>) for
+each one.</p>
+<p>This method powers the “package embedding” stage of JetLeaf’s bootstrap
+generation. It reads <code>.dart_tool/package_graph.json</code> (via
+<a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility/readPackageGraphDependencies.html">FileUtility.readPackageGraphDependencies</a>) and produces a dedicated Dart
+class for every package—including transitive dependencies—containing:</p>
+<ul>
+<li>compile-time metadata (name, version, language version)</li>
+<li>file system paths</li>
+<li>the package’s root URI</li>
+<li>whether the package is the <em>root application package</em></li>
+</ul>
+<p>Each wrapper is emitted as a class extending <code>GenerativePackage</code> with a
+<strong>zero-argument constructor</strong>, which is essential because JetLeaf instantiates
+packages through mirrors during runtime bootstrapping.</p>
+<p>Example generated class:</p>
+<pre class="language-dart"><code class="language-dart">final class httpGenerativePackage extends GenerativePackage {
+  httpGenerativePackage();
+
+  @override
+  String getName() =&gt; 'http';
+
+  @override
+  String getVersion() =&gt; '1.2.0';
+
+  @override
+  String? getLanguageVersion() =&gt; '3.3';
+
+  @override
+  bool getIsRootPackage() =&gt; false;
+
+  @override
+  String? getFilePath() =&gt; '/.../.pub-cache/...';
+
+  @override
+  String? getRootUri() =&gt; 'package:http/';
+}
+</code></pre>
+<h2 id="output-location">Output Location</h2>
+<p>All generated package wrappers are written to:</p>
+<pre class="language-text"><code class="language-text">&lt;buildDir&gt;/&lt;jetleaf_generated&gt;/packages/*.dart
+</code></pre>
+<p>The directory is automatically created if missing.</p>
+<p>Each file contains:</p>
+<ul>
+<li>JetLeaf license header</li>
+<li>auto-generated notice</li>
+<li>import for <code>GenerativePackage</code></li>
+<li>detailed macro documentation template</li>
+<li>sanitized, stable class name derived from the package name</li>
+</ul>
+<p>File names are produced using <code>snake_case</code>:</p>
+<pre class="language-text"><code class="language-text">my_package_generative_package.dart
+</code></pre>
+<h2 id="return-value">Return Value</h2>
+<p>Returns a <code>String</code> containing the import line referencing the newly package file.
+These imports are later injected into JetLeaf’s
+bootstrap entrypoint, ensuring the generated packages are <strong>preserved</strong>
+during compilation.</p>
+<p>Example returned value:</p>
+<pre class="language-dart"><code class="language-dart">{
+  "import 'package:jetleaf_lang/lang.dart' show GenerativePackage;",
+  "import 'generated/packages/http_generative_package.dart';",
+  ...
+}
+</code></pre>
+<h2 id="spinner-output">Spinner Output</h2>
+<p>A CLI spinner is displayed while the generator runs:</p>
+<ul>
+<li>Start: “🔍 Embedding packages into Dart classes…”</li>
+<li>Success: “✅ Generated N PackageInfo files in path”</li>
+<li>No dependencies: Informational message, not an error</li>
+</ul>
+<h2 id="behavior-breakdown">Behavior Breakdown</h2>
+<ol>
+<li>Start spinner</li>
+<li>Ensure output directory exists</li>
+<li>Read dependency graph from the project’s <code>.dart_tool</code> directory</li>
+<li>For each discovered package:
+<ul>
+<li>Sanitize its name for use in a Dart class</li>
+<li>Create a <code>&lt;Name&gt;GenerativePackage</code> class</li>
+<li>Generate metadata getter overrides</li>
+<li>Write the file to the packages directory</li>
+<li>Record its import path</li>
+</ul>
+</li>
+<li>Stop spinner with contextual success message</li>
+</ol>
+<h2 id="parameters">Parameters</h2>
+<ul>
+<li>
+<p><strong><code>targetPath</code></strong><br>
+The absolute path to the final bootstrap file that will import the
+generated package classes.</p>
+</li>
+<li>
+<p><strong><code>project</code></strong><br>
+A directory representing the root of the current project.<br>
+Used by <a href="https://pub.dev/documentation/jetleaf_build/1.0.0/jetleaf_build/FileUtility-class.html">FileUtility</a> to locate <code>.dart_tool/package_graph.json</code>.</p>
+</li>
+<li>
+<p><strong><code>fileUtils</code></strong><br>
+Provides the package graph parser. Must expose:</p>
+<ul>
+<li><code>readPackageGraphDependencies(Directory)</code></li>
+<li>metadata getters such as <code>getName()</code>, <code>getVersion()</code>, etc.</li>
+</ul>
+</li>
+</ul>
+<h2 id="error-handling">Error Handling</h2>
+<ul>
+<li>If <code>.dart_tool/package_graph.json</code> is missing or unreadable, the method
+simply yields no generated files and prints an informational notice.</li>
+<li>File write errors propagate to the caller.</li>
+<li>The generator never silently swallows invalid package metadata; it embeds
+exactly what the graph provides.</li>
+</ul>
+<h2 id="performance-notes">Performance Notes</h2>
+<ul>
+<li>Generated classes store only lightweight metadata—no file content—
+resulting in minimal code size impact.</li>
+<li>Package metadata is embedded at compile time and loaded instantly at
+runtime through mirrors.</li>
+</ul>
+<p>This method is used exclusively during JetLeaf’s bootstrap generation
+and should not be invoked manually outside the build system.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@protected
+Future&lt;String&gt; generateAndWritePackages(String targetPath, Directory project, FileUtility fileUtils, CliLogger logger) async {
+  final spinner = Spinner(&#39;🔍 Embedding packages into dart classes...&#39;);
+  spinner.start();
+
+  final outputPath = p.join(p.dirname(targetPath), &quot;generated_packages.dart&quot;);
+  final outputFile = File(outputPath);
+
+  if (!outputFile.existsSync()) {
+    await outputFile.create(recursive: true);
+  }
+
+  final resources = await fileUtils.readPackageGraphDependencies(project);
+  if (resources.isNotEmpty) {
+    final buffer = StringBuffer();
+
+    &#47;&#47; Write header
+    writeHeader(buffer, outputPath, logger);
+    buffer.writeln(&quot;import &#39;package:jetleaf_lang&#47;lang.dart&#39; show GenerativePackage;&quot;);
+
+    for (final resource in resources) {
+      final sanitizedPackageName = sanitizePackageName(resource.getName());
+      final className = &#39;Generative${sanitizedPackageName}Package&#39;;
+
+      buffer.write(&#39;&#39;&#39;
+
+&#47;&#47;&#47; {@template ${className.toLowerCase().snakeCase()}}
+&#47;&#47;&#47; A generated representation of a Dart package discovered during the
+&#47;&#47;&#47; JetLeaf resource build step.
+&#47;&#47;&#47;
+&#47;&#47;&#47; This class provides compile-time metadata for the package:
+&#47;&#47;&#47;
+&#47;&#47;&#47; - **Name:** `${resource.getName()}`
+&#47;&#47;&#47; - **Version:** `${resource.getVersion()}`
+&#47;&#47;&#47; - **Language version:** `${resource.getLanguageVersion()}`
+&#47;&#47;&#47; - **Is root package:** `${resource.getIsRootPackage()}`
+&#47;&#47;&#47; - **File system path:** `${resource.getFilePath()}`
+&#47;&#47;&#47; - **Root URI:** `${resource.getRootUri()}`
+&#47;&#47;&#47;
+&#47;&#47;&#47; The constructor intentionally has **no arguments**, allowing JetLeaf to
+&#47;&#47;&#47; instantiate it reflectively at runtime using mirrors.
+&#47;&#47;&#47;
+&#47;&#47;&#47; This class is generated automatically.
+&#47;&#47;&#47; **Do not edit manually.**
+&#47;&#47;&#47; {@endtemplate}
+final class $className extends GenerativePackage {
+&#47;&#47;&#47; {@macro ${className.toLowerCase().snakeCase()}}
+$className();
+
+@override
+String getName() =&gt; &#39;${resource.getName()}&#39;;
+
+@override
+String getVersion() =&gt; &#39;${resource.getVersion()}&#39;;
+
+@override
+String? getLanguageVersion() =&gt; &#39;${resource.getLanguageVersion()}&#39;;
+
+@override
+bool getIsRootPackage() =&gt; ${resource.getIsRootPackage()};
+
+@override
+String? getFilePath() =&gt; &#39;${resource.getFilePath()}&#39;;
+
+@override
+String? getRootUri() =&gt; &#39;${resource.getRootUri()}&#39;;
+}
+&#39;&#39;&#39;);
+    }
+
+    await outputFile.writeAsString(buffer.toString());
+    spinner.stop();
+    logger.info(&#39;✅ Generated ${resources.length} package info files in ${outputFile.path}&#39;);
+  } else {
+    spinner.stop();
+    logger.warn(&#39;ℹ️ No dependencies found in .dart_tool&#47;package_graph.json to generate package info for.&#39;);
+  }
+
+  return p.relative(outputPath, from: p.dirname(targetPath));
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li><a href="../../jetleaf_devtool/GenerativeSupport-class.html">GenerativeSupport</a></li>
+    <li class="self-crumb">generateAndWritePackages method</li>
+</ol>
+
+    <h5>GenerativeSupport class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the ApplicationFileWatcher class from the jetleaf_devtool library, for the Dart programming language.">
+  <title>ApplicationFileWatcher class - jetleaf_devtool library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li><a href="../jetleaf_devtool/">jetleaf_devtool.dart</a></li>
+    <li class="self-crumb">ApplicationFileWatcher class</li>
+  </ol>
+  <div class="self-name">ApplicationFileWatcher</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="jetleaf_devtool&#47;jetleaf_devtool-library-sidebar.html"
+    data-below-sidebar="jetleaf_devtool&#47;ApplicationFileWatcher-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">ApplicationFileWatcher</span> class 
+    <a href="https://dart.dev/language/class-modifiers#final" class="feature feature-final" title="This class can neither be extended, implemented, nor mixed in.">final</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A concrete implementation of <a href="../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a> for monitoring file system changes
+within a project or directory.</p>
+<p>The <code>ApplicationFileWatcher</code> observes a root directory and detects:</p>
+<ul>
+<li>Newly created files</li>
+<li>Modified files</li>
+<li>Deleted files</li>
+<li>Renamed files</li>
+</ul>
+<h3 id="features">Features</h3>
+<ol>
+<li>
+<p><strong>Automatic Project Root Detection</strong></p>
+<ul>
+<li>By default, the watcher attempts to locate the project root by
+searching for the nearest <code>pubspec.yaml</code> starting from <a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory/current.html">Directory.current</a>.</li>
+<li>If no <code>pubspec.yaml</code> is found, the current directory is used.</li>
+</ul>
+</li>
+<li>
+<p><strong>Include and Exclude Filters</strong></p>
+<ul>
+<li>Uses <a href="../jetleaf_devtool/ApplicationFileWatcher/includePatterns.html">includePatterns</a> to allow only files matching certain extensions or paths.</li>
+<li>Uses <a href="../jetleaf_devtool/ApplicationFileWatcher/excludePatterns.html">excludePatterns</a> to ignore build directories, lock files, or system files.</li>
+<li>Filters are RegExp-based for maximum flexibility.</li>
+</ul>
+</li>
+<li>
+<p><strong>Debounced Event Delivery</strong></p>
+<ul>
+<li>Avoids flooding with events when multiple rapid changes occur.</li>
+<li>The <a href="../jetleaf_devtool/ApplicationFileWatcher/debounceDuration.html">debounceDuration</a> defines the minimum interval between event emissions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Change Tracking</strong></p>
+<ul>
+<li>Maintains internal lists of created, modified, deleted, and renamed files.</li>
+<li>Lists are available through <a href="../jetleaf_devtool/ApplicationFileWatcher/getCreatedFiles.html">getCreatedFiles</a>, <a href="../jetleaf_devtool/ApplicationFileWatcher/getModifiedFiles.html">getModifiedFiles</a>,
+<a href="../jetleaf_devtool/ApplicationFileWatcher/getDeletedFiles.html">getDeletedFiles</a>, and <a href="../jetleaf_devtool/ApplicationFileWatcher/getRenamedFiles.html">getRenamedFiles</a>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="usage">Usage</h3>
+<pre class="language-dart"><code class="language-dart">final watcher = ApplicationFileWatcher();
+
+await watcher.start((event) {
+  if (event is CreatedFileEvent) {
+    print('File created: ${event.getSource().path}');
+  } else if (event is ModifiedFileEvent) {
+    print('File modified: ${event.getSource().path}');
+  }
+});
+
+// Stop watching when done
+await watcher.stop();
+</code></pre>
+<h3 id="customization">Customization</h3>
+<pre class="language-dart"><code class="language-dart">watcher.debounceDuration = Duration(milliseconds: 500);
+watcher.includePatterns = [RegExp(r'\.dart$')];
+watcher.excludePatterns = [RegExp(r'[/\\](build|.git)[/\\]?')];
+</code></pre>
+<h3 id="implementation-notes">Implementation Notes</h3>
+<ul>
+<li>Uses <a href="https://api.dart.dev/stable/3.9.2/dart-io/FileSystemEntity/watch.html">Directory.watch</a> internally for cross-platform file system notifications.</li>
+<li>Events are buffered and debounced to prevent duplicate notifications.</li>
+<li>Renamed files are tracked if the underlying <a href="https://api.dart.dev/stable/3.9.2/dart-io/FileSystemMoveEvent-class.html">FileSystemMoveEvent</a> provides
+an <code>oldPath</code>.</li>
+<li>Includes utility <code>_isRelevant</code> to match files against include/exclude patterns.</li>
+<li><code>_flushBuffer</code> ensures only the latest event per file path is delivered after debouncing.</li>
+</ul>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="../jetleaf_devtool/FileWatcher-class.html">FileWatcher</a></li>
+    </ul>
+  </dd>
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="ApplicationFileWatcher.new" class="callable">
+          <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/ApplicationFileWatcher.html">ApplicationFileWatcher.new</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Constructs a new <a href="../jetleaf_devtool/ApplicationFileWatcher-class.html">ApplicationFileWatcher</a> instance.
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="debounceDuration" class="property">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/debounceDuration.html">debounceDuration</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Duration-class.html">Duration</a></span>
+  
+
+</dt>
+<dd>
+  Minimum duration between emitting file events.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="excludePatterns" class="property">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/excludePatterns.html">excludePatterns</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/RegExp-class.html">RegExp</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  List of RegExp patterns for files or directories to exclude from monitoring.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="includePatterns" class="property">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/includePatterns.html">includePatterns</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-core/RegExp-class.html">RegExp</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  List of RegExp patterns for files or paths to include in monitoring.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="root" class="property">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/root.html">root</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span>
+  
+
+</dt>
+<dd>
+  The root directory being monitored.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="getCreatedFiles" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/getCreatedFiles.html">getCreatedFiles</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the list of files that have been <strong>created</strong> since the watcher
+started or the last reset.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="getDeletedFiles" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/getDeletedFiles.html">getDeletedFiles</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the list of files that have been <strong>deleted</strong> since the watcher
+started or the last reset.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="getModifiedFiles" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/getModifiedFiles.html">getModifiedFiles</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the list of files that have been <strong>modified</strong> since the watcher
+started or the last reset.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="getRenamedFiles" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/getRenamedFiles.html">getRenamedFiles</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.2/dart-io/File-class.html">File</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the list of files that have been <strong>renamed</strong> since the watcher
+started or the last reset.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="getSource" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/getSource.html">getSource</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-io/Directory-class.html">Directory</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the root directory being monitored.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="start" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/start.html">start</a></span><span class="signature">(<wbr><span class="parameter" id="start-param-onEvent"><span class="type-annotation"><a href="../jetleaf_devtool/FileEventHandler.html">FileEventHandler</a></span> <span class="parameter-name">onEvent</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Starts the file watcher and begins listening for file events.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="stop" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/stop.html">stop</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Stops the watcher and releases all associated resources.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="toFileEvent" class="callable">
+  <span class="name"><a href="../jetleaf_devtool/ApplicationFileWatcher/toFileEvent.html">toFileEvent</a></span><span class="signature">(<wbr><span class="parameter" id="toFileEvent-param-event"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/file/FileSystemEvent-class.html">FileSystemEvent</a></span> <span class="parameter-name">event</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../jetleaf_devtool/FileEvent-class.html">FileEvent</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Converts a <a href="https://api.dart.dev/stable/3.9.2/file/FileSystemEvent-class.html">FileSystemEvent</a> into a concrete <a href="../jetleaf_devtool/FileEvent-class.html">FileEvent</a>.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.2/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.9.2/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">jetleaf_devtool</a></li>
+    <li><a href="../jetleaf_devtool/">jetleaf_devtool</a></li>
+    <li class="self-crumb">ApplicationFileWatcher class</li>
+</ol>
+
+    <h5>jetleaf_devtool library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    jetleaf_devtool
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
