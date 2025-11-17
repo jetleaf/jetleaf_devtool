@@ -12,5 +12,3 @@ Key features
 
 Documentation: https://jetleaf.hapnium.com/docs/devtool
 Repository: https://github.com/jetleaf/jetleaf_devtool
-
-If you'd like, I can add a small example showing how to run the `jl` CLI or show common development workflows.
