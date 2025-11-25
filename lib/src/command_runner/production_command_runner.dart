@@ -138,12 +138,13 @@ Note:
   Compilation for AOT (.exe, .aot) support is not yet implemented. As at v1.0.0, JetLeaf compiles only for JIT (.dill)
 
 Options:
-  -h,   --help       Show this help message (Flag).
-  -e,   --entry      Specify the entry file for the application.
-  -p,   --path       Path to executable file (e.g., "build/").
-  -n,   --name       Name of the executable file (e.g., "server").
-  -ed,  --exclude    Directories/Files to exclude from scanner
-  -in,  --include    Directories/Files to include in the scanner
+  -h,   --help          Show this help message (Flag).
+  -e,   --entry         Specify the entry file for the application.
+  -p,   --path          Path to executable file (e.g., "build/").
+  -n,   --name          Name of the executable file (e.g., "server").
+  -ed,  --exclude       Directories/Files to exclude from scanner
+  -in,  --include       Directories/Files to include in the scanner.
+  -ni,  --no-interact   Disable interactive terminal - mostly for non-interactive terminals like docker. Provide answers via env or args.
 
 Examples:
   jl $command --entry lib/main.dart
@@ -153,12 +154,16 @@ Examples:
   Future<void> run(List<String> args) async {
     final stopWatch = Stopwatch()..start();
     final project = Directory.current;
-    final buildFolder = "build";
+    final defaultPathFolder = "build";
+    final defaultExecName = 'server';
+
     String? appPath;
+    String? pathFolder = defaultPathFolder;
   
     try {
       Set<File> dartFiles = {};
-      File mainEntryFile = await _getEntryFile(args, logger, project, dartFiles.addAll);
+      final noInteract = args.contains('--no-interact');
+      File mainEntryFile = await _getEntryFile(args, logger, project, dartFiles.addAll, noInteract);
       final packageName = await _readPkgName(logger, project);
 
       // ------------------------------------------------------------
@@ -166,43 +171,53 @@ Examples:
       // ------------------------------------------------------------
       await _runBuildRunner(project, logger);
 
-      String? path = _getArgValue(args, ['-p', '--path']);
+      pathFolder = _getArgValue(args, ['-p', '--path']);
 
       // Prompt for path file if not provided
-      if (path == null || path.isEmpty) {
-        path = prompt.get('Enter the executable path (Eg. $buildFolder/)', defaultsTo: '$buildFolder/');
+      if (pathFolder == null || pathFolder.isEmpty) {
+        if (noInteract) {
+          pathFolder = _getValue(pathFolder, Platform.environment['JL_PATH_FOLDER'], defaultPathFolder);
+        } else {
+          pathFolder = prompt.get('Enter the path folder (Eg. $defaultPathFolder/)', defaultsTo: '$defaultPathFolder/');
+        }
       }
 
       String? name = _getArgValue(args, ['-n', '--name']);
 
       // Prompt for name file if not provided
       if (name == null || name.isEmpty) {
-        name = prompt.get('Enter the executable file name (Eg. server)', defaultsTo: 'server');
+        if (noInteract) {
+          name = _getValue(name, Platform.environment['JL_EXEC_NAME'], defaultExecName);
+        } else {
+          name = prompt.get('Enter the executable file name (Eg. server)', defaultsTo: defaultExecName);
+        }
       }
 
-      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? '';
-      String included = _getArgValue(args, ['--include', '-in']) ?? '';
+      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? Platform.environment['JL_BUILD_EXCLUDE'] ?? '';
+      String included = _getArgValue(args, ['--include', '-in']) ?? Platform.environment['JL_BUILD_INCLUDE'] ?? '';
       List<String> excludeDirs = excluded.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(excluded);
       List<String> includeDirs = included.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(included);
 
       // 🔹 Ask for excluded directories if none provided
-      if (excludeDirs.isEmpty && prompt.getBool('Any directories to exclude from scanning?', defaultsTo: false)) {
-        excludeDirs = StringUtils.commaDelimitedListToStringList(
-          prompt.get('Enter comma-separated directories to exclude (e.g., "temp,dist")', defaultsTo: ''),
-        );
-      }
+      if (!noInteract) {
+        if (excludeDirs.isEmpty && prompt.getBool('Any directories to exclude from scanning?', defaultsTo: false)) {
+          excludeDirs = StringUtils.commaDelimitedListToStringList(
+            prompt.get('Enter comma-separated directories to exclude (e.g., "temp,dist")', defaultsTo: ''),
+          );
+        }
 
-      // 🔹 Ask for included directories if none provided
-      if (includeDirs.isEmpty && prompt.getBool('Any directories to include from scanning?', defaultsTo: false)) {
-        includeDirs = StringUtils.commaDelimitedListToStringList(
-          prompt.get('Enter comma-separated directories to include (e.g., "src,lib")', defaultsTo: ''),
-        );
+        // 🔹 Ask for included directories if none provided
+        if (includeDirs.isEmpty && prompt.getBool('Any directories to include from scanning?', defaultsTo: false)) {
+          includeDirs = StringUtils.commaDelimitedListToStringList(
+            prompt.get('Enter comma-separated directories to include (e.g., "src,lib")', defaultsTo: ''),
+          );
+        }
       }
 
       final compiler = CompilerType.JIT;
-      final outputPath = p.join(path, '$name${_getFileType(compiler)}');
+      final outputPath = p.join(pathFolder, '$name${_getFileType(compiler)}');
       appPath = outputPath;
-      final sourcePath = p.join(project.path, buildFolder, '${packageName}_bootstrap.dart');
+      final sourcePath = p.join(project.path, pathFolder, '${packageName}_bootstrap.dart');
 
       // 🔹 Run JetLeaf bootstrap code generator
       final config = RuntimeScannerConfiguration(
@@ -210,7 +225,7 @@ Examples:
         reload: true,
         packagesToScan: [...includeDirs],
         writeDeclarationsToFiles: true,
-        outputPath: '$buildFolder/generated',
+        outputPath: '$pathFolder/generated',
         packagesToExclude: [
           'collection',
           'analyzer',
@@ -267,19 +282,26 @@ Examples:
       logger.error('Error during build run: $e');
       exit(1);
     } finally {
-      Directory(p.join(project.path, buildFolder)).deleteSync(recursive: true);
-      final buildDir = Directory(p.join(project.path, buildFolder));
+      final buildDir = Directory(p.join(project.path, pathFolder));
 
-      // Iterate through all items in the build directory
-      for (final entity in buildDir.listSync(recursive: false)) {
-        if (appPath != null && p.equals(entity.path, p.join(appPath))) {
-          continue;
-        }
+      if (buildDir.existsSync()) {
+        // Normalized path of the file to keep
+        final keepPath = appPath != null ? p.normalize(p.join(project.path, appPath)) : null;
 
-        try {
-          entity.deleteSync(recursive: true);
-        } catch (e) {
-          // Handle or log errors if necessary
+        // Only look at top-level items
+        for (final entity in buildDir.listSync(recursive: false)) {
+          final entityPath = p.normalize(entity.path);
+
+          // Skip the file we want to keep
+          if (keepPath != null && p.equals(entityPath, keepPath)) {
+            continue;
+          }
+
+          try {
+            entity.deleteSync(recursive: true);
+          } catch (e) {
+            logger.warn('Failed to delete ${entity.path}: $e');
+          }
         }
       }
     }

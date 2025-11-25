@@ -12,17 +12,59 @@
 // 
 // 🔧 Powered by Hapnium — the Dart backend engine 🍃
 
-/// JetLeaf Bootstrap — Public Library Interface
+/// 🛠 **JetLeaf Devtool**
 ///
-/// This library exposes the primary APIs used for:
-/// - Running JetLeaf CLI commands
-/// - Executing the JetLeaf command runner
-/// - Building and generating project artifacts
-/// - Accessing code-generation and bootstrap support utilities
-/// - Watching files and projects for changes
+/// The JetLeaf Devtool provides a set of development utilities for
+/// JetLeaf projects, including CLI tools, project building, file
+/// watching, and command execution support.
 ///
-/// Consumers can import this library to interact with JetLeaf’s
-/// build system, code generators, and project watchers.
+/// This library is designed to streamline development workflows,
+/// automate repetitive tasks, and provide live feedback during
+/// project development.
+///
+///
+/// ## 🔑 Core Components
+///
+/// ### 💻 Command-Line Interface
+/// - `cli.dart` — core CLI entry point and interface for executing
+///   development tasks
+///
+/// ### 🏃 Command Runner
+/// - `command_runner.dart` — executes registered commands with
+///   arguments and manages command lifecycle
+///
+/// ### 📦 Project Builder
+/// - `project_builder.dart` — handles project compilation, build
+///   scripts, and automated project tasks
+///
+/// ### 🔧 Support Utilities
+/// - `support.dart` — helper functions and utilities to support
+///   development operations
+///
+/// ### 👀 File & Project Watchers
+/// - `file_watcher.dart` — watches files for changes and triggers
+///   configured actions
+/// - `project_watcher.dart` — monitors the project directory and
+///   automates tasks such as rebuilds, reloads, or other developer
+///   workflows
+///
+///
+/// ## 🎯 Intended Usage
+///
+/// Import this library to integrate development tooling into your
+/// JetLeaf project:
+/// ```dart
+/// import 'package:jetleaf_devtool/jetleaf_devtool.dart';
+///
+/// final watcher = ProjectWatcher();
+/// watcher.watch();
+/// ```
+///
+/// Provides automated file watching, command execution, and project
+/// building capabilities to enhance the developer experience.
+///
+///
+/// © 2025 Hapnium & JetLeaf Contributors
 library;
 
 export 'src/cli/cli.dart';

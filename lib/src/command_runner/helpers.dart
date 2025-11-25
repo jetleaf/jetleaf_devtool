@@ -133,11 +133,15 @@ String? _extractVersion(String content) {
 /// final entryFile = await _getEntryFile(args, logger, Directory.current);
 /// print('Resolved entry: ${entryFile.path}');
 /// ```
-Future<File> _getEntryFile(List<String> args, CliLogger logger, Directory project, [OnFilesLoaded? onFound]) async {
+Future<File> _getEntryFile(List<String> args, CliLogger logger, Directory project, [OnFilesLoaded? onFound, bool noInteract = false]) async {
   String? entry = _getArgValue(args, ['-e', '--entry']);
 
   // 🔹 Prompt for entry file if missing
-  entry ??= prompt.get('Enter the entry file path', defaultsTo: '');
+  if (noInteract) {
+    entry ??= _getValue(entry, Platform.environment['JL_ENTRY'], '');
+  } else {
+    entry ??= prompt.get('Enter the entry file path', defaultsTo: '');
+  }
 
   File mainEntryFile;
 
@@ -181,6 +185,30 @@ String? _getArgValue(List<String> args, List<String> keys) {
   }
 
   return null;
+}
+
+/// Returns the first non-empty value from the provided sources, falling back to a default.
+///
+/// This utility is used to support both interactive and non-interactive modes in the
+/// JetLeaf build command, allowing values to be supplied via:
+/// 1. Command-line arguments (`argValue`)
+/// 2. Environment variables (`envVar`)
+/// 3. A default value (`defaultValue`)
+///
+/// The precedence is:
+/// 1. `argValue` (highest priority)
+/// 2. `envVar`
+/// 3. `defaultValue` (lowest priority)
+///
+/// Example usage:
+/// ```dart
+/// final pathFolder = _getValue(cliArg, Platform.environment['JL_BUILD_PATH'], 'build/');
+/// ```
+/// In non-interactive mode, this ensures that the build can proceed without prompts.
+String _getValue(String? argValue, String? envVar, String defaultValue) {
+  if (argValue != null && argValue.isNotEmpty) return argValue;
+  if (envVar != null && envVar.isNotEmpty) return envVar;
+  return defaultValue;
 }
 
 /// Locates the primary Dart entry file containing `void main(...)` and a call

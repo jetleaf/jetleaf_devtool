@@ -68,11 +68,12 @@ Description:
   $description
 
 Options:
-  -h,   --help       Show this help message (Flag).
-  -e,   --entry      Specify the entry file for the application.
-  -w,   --watch      Watch for file changes and reload automatically (Automatic hot reload).
-  -ed,  --exclude    Directories/Files to exclude from scanner.
-  -in,  --include    Directories/Files to include in the scanner.
+  -h,   --help          Show this help message (Flag).
+  -e,   --entry         Specify the entry file for the application.
+  -w,   --watch         Watch for file changes and reload automatically (Automatic hot reload).
+  -ed,  --exclude       Directories/Files to exclude from scanner.
+  -in,  --include       Directories/Files to include in the scanner.
+  -ni,  --no-interact   Disable interactive terminal - mostly for non-interactive terminals like docker. Provide answers via env or args.
 
 Examples:
   jl $command --entry lib/main.dart
@@ -87,7 +88,8 @@ Examples:
 
     try {
       Set<File> dartFiles = {};
-      File mainEntryFile = await _getEntryFile(args, logger, project, dartFiles.addAll);
+      final noInteract = args.contains('--no-interact');
+      File mainEntryFile = await _getEntryFile(args, logger, project, dartFiles.addAll, noInteract);
       final packageName = await _readPkgName(logger, project);
 
       // ------------------------------------------------------------
@@ -100,23 +102,25 @@ Examples:
       // ------------------------------------------------------------
       final entrypoint = p.join(project.path, Constant.JETLEAF_GENERATED_DIR_NAME, '${packageName}_entry.dart');
 
-      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? '';
-      String included = _getArgValue(args, ['--include', '-in']) ?? '';
+      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? Platform.environment['JL_BUILD_EXCLUDE'] ?? '';
+      String included = _getArgValue(args, ['--include', '-in']) ?? Platform.environment['JL_BUILD_INCLUDE'] ?? '';
       List<String> excludeDirs = excluded.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(excluded);
       List<String> includeDirs = included.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(included);
 
       // 🔹 Ask for excluded directories if none provided
-      if (excludeDirs.isEmpty && prompt.getBool('Any directories to exclude from scanning?', defaultsTo: false)) {
-        excludeDirs = StringUtils.commaDelimitedListToStringList(
-          prompt.get('Enter comma-separated directories to exclude (e.g., "temp,dist")', defaultsTo: ''),
-        );
-      }
+      if (!noInteract) {
+        if (excludeDirs.isEmpty && prompt.getBool('Any directories to exclude from scanning?', defaultsTo: false)) {
+          excludeDirs = StringUtils.commaDelimitedListToStringList(
+            prompt.get('Enter comma-separated directories to exclude (e.g., "temp,dist")', defaultsTo: ''),
+          );
+        }
 
-      // 🔹 Ask for included directories if none provided
-      if (includeDirs.isEmpty && prompt.getBool('Any directories to include from scanning?', defaultsTo: false)) {
-        includeDirs = StringUtils.commaDelimitedListToStringList(
-          prompt.get('Enter comma-separated directories to include (e.g., "src,lib")', defaultsTo: ''),
-        );
+        // 🔹 Ask for included directories if none provided
+        if (includeDirs.isEmpty && prompt.getBool('Any directories to include from scanning?', defaultsTo: false)) {
+          includeDirs = StringUtils.commaDelimitedListToStringList(
+            prompt.get('Enter comma-separated directories to include (e.g., "src,lib")', defaultsTo: ''),
+          );
+        }
       }
 
       final autoRebuild = bool.tryParse(_getArgValue(args, ['--watch', '-w']) ?? "false");

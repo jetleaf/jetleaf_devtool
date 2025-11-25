@@ -108,6 +108,13 @@ Shows project details from pubspec.yaml including:
   - Homepage, repository, and documentation links
   - Current JetLeaf framework version in use
   - Dependency information and project metadata
+
+When using no-interact in allowed commands, common environment keys are:
+  - JL_ENTRY              The entry path that contains the main function (eg. lib/main.dart)
+  - JL_PATH_FOLDER        The folder where the generated executable will be stored (eg. build)
+  - JL_EXEC_NAME          The name of the executable file (eg. server)
+  - JL_BUILD_EXCLUDE      The list of packages to exclude from scanning (eg. build, analyzer)
+  - JL_BUILD_INCLUDE      The list of packages to include when scanning (eg. build, analyzer)
 ''';
 
   @override

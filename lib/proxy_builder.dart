@@ -145,24 +145,16 @@ class ProxyBuilder extends Builder {
     }
 
     final skip = [
-      "code_builder",
-      "build_runner",
-      "build_daemon",
-      "built_value",
-      "built_collection",
-      "build_config",
+      ...getNonNecessaryPackages(),
       "fixnum",
       "graphs",
       "http_multi_server",
       "io",
       "jetson",
       "jtl",
-      "dart_internal",
       "matcher",
       "collection",
       "string_scanner",
-      "pub_semver",
-      "analyzer",
       "mime",
       "pool",
       "pubspec_parse",
@@ -171,18 +163,13 @@ class ProxyBuilder extends Builder {
       "shelf_web_socket",
       "shelf",
       "http_parser",
-      "source_gen",
-      "dart_style",
       "args",
-      "build",
       "logging",
       "source_span",
       "watcher",
       "boolean_selector",
       "stack_trace",
-      "test_api",
       "stream_transform",
-      "_fe_analyzer_shared",
       "convert",
       "file",
       "glob",
@@ -198,8 +185,6 @@ class ProxyBuilder extends Builder {
       "web",
       "web_socket",
       "web_socket_channel",
-      "frontend_server_client",
-      "vm_service"
     ];
 
     if (skip.any((s) => s.equals(inputId.package))) {

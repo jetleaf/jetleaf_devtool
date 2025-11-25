@@ -100,10 +100,13 @@ final class ProductionProjectBuilder extends GenerativeSupport implements Projec
     spinner.start();
 
     final buildDir = Directory(p.dirname(_outputPath));
-    if (!buildDir.existsSync()) {
-      runner.logger.info('📁 Creating build directory: ${buildDir.path}');
-      await buildDir.create(recursive: true);
+    if (await buildDir.exists()) {
+      runner.logger.info('🗑️  Removing existing build directory: ${buildDir.path}');
+      await buildDir.delete(recursive: true);
     }
+
+    runner.logger.info('📁 Creating build directory: ${buildDir.path}');
+    await buildDir.create(recursive: true);
 
     spinner.stop(successMessage: '✅ Build directory prepared successfully.');
 
