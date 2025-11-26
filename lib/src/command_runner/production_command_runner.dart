@@ -248,7 +248,10 @@ Examples:
       );
 
       final builder = ProductionProjectBuilder(compiler, outputPath, sourcePath);
-      final result = await builder.build(this, mainEntryFile, packageName, dartFiles.toList(), fileUtils, project, args);
+      final finalArgs = args;
+      finalArgs.add(Constant.JETLEAF_GENERATED_DIR_NAME);
+
+      final result = await builder.build(this, mainEntryFile, packageName, dartFiles.toList(), fileUtils, project, finalArgs);
 
       print('''
 🍃 JetLeaf Build Summary
