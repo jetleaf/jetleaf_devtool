@@ -122,7 +122,7 @@ final class ProductionProjectBuilder extends GenerativeSupport implements Projec
     writeImports(buffer, generatedImports);
     buffer.writeln("import '$packageUri' as ${buildEntryAlias(packageName)};");
     
-    writeMainFunction(buffer, packageName, runner.logger, args);
+    writeMainFunction(buffer, packageName, runner.logger, args, await isAsyncMain(entry));
     writeTarget(File(_sourcePath), buffer, runner.logger);
 
     // Step 4: Compile the project

@@ -145,7 +145,7 @@ abstract class WritingSupport extends ImportSupport {
   /// }
   /// ```
   @protected
-  void writeMainFunction(StringBuffer buffer, String packageName, CliLogger logger, List<String> args) {
+  void writeMainFunction(StringBuffer buffer, String packageName, CliLogger logger, List<String> args, bool isAsync) {
     final spinner = Spinner('🔍 Writing main function entry for $packageName...');
     spinner.start();
 
@@ -158,12 +158,41 @@ Future<void> main() async {
   // Call the user's main function
   // -------------------------------------------------------------------------
   // Pass all arguments received by this bootstrap to the user's main entry point.
-  ${buildEntryAlias(packageName)}.main($argsLiteral);
+  ${isAsync ? "await " : ""}${buildEntryAlias(packageName)}.main($argsLiteral);
 }
   ''');
 
     spinner.stop();
     logger.info("✅ Done writing the main function for $packageName");
+  }
+
+  /// Determines whether the entrypoint `main()` function in the given Dart file
+  /// is asynchronous.
+  ///
+  /// This function:
+  /// - Parses the file into an AST using the Dart analyzer
+  /// - Searches for a top-level function named `main`
+  /// - Checks whether its return type is `Future`
+  /// - Or whether the function body is marked `async`
+  ///
+  /// Returns `true` if `main` is asynchronous, otherwise `false`.
+  ///
+  /// Throws if the file cannot be read or contains invalid Dart syntax.
+  Future<bool> isAsyncMain(File file) async {
+    final result = parseString(content: await file.readAsString());
+
+    for (final declaration in result.unit.declarations) {
+      if (declaration is FunctionDeclaration && declaration.name.lexeme == 'main') {
+        final returnType = declaration.returnType?.toSource() ?? '';
+        final isFuture = returnType.startsWith('Future');
+
+        final isAsync = declaration.functionExpression.body.isAsynchronous;
+
+        return isFuture || isAsync;
+      }
+    }
+
+    return false;
   }
 
   /// Writes the contents of [buffer] to the specified [target] file.

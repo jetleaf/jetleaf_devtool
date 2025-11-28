@@ -89,7 +89,7 @@ final class DevelopmentProjectBuilder extends GenerativeSupport implements Proje
     buffer.writeln("import '$packageUri' as ${buildEntryAlias(packageName)};");
 
     writeImports(buffer, generatedImports);
-    writeMainFunction(buffer, packageName, runner.logger, args);
+    writeMainFunction(buffer, packageName, runner.logger, args, await isAsyncMain(entry));
     writeTarget(_output, buffer, runner.logger);
 
     return DevelopmentProject(_output, formatBytes(await _output.length()), {
