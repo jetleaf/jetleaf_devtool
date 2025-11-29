@@ -22,6 +22,7 @@ import 'package:path/path.dart' as p;
 
 import '../common/logger.dart';
 import '../common/spinner.dart';
+import '../utils.dart';
 
 part 'import_support.dart';
 part 'package_support.dart';
