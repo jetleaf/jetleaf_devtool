@@ -81,7 +81,6 @@ abstract class WritingSupport extends ImportSupport {
   ///
   /// Parameters:
   /// - [buffer]: The output buffer where formatted imports are written.
-  /// - [packageUri]: The URI of the user’s main library (usually the entry file).
   /// - [generatedImports]: A list of discovered or auto-generated import URIs.
   ///
   /// Notes:
@@ -93,33 +92,7 @@ abstract class WritingSupport extends ImportSupport {
     final spinner = Spinner('🔍 Writing import statements of length ${generatedImports.length}...');
     spinner.start();
 
-    // All imports including user main
-    final imports = generatedImports.toSet();
-
-    // Split into dart: imports and others
-    final dartImports = imports.where((i) => i.startsWith('dart:')).toList()..sort();
-    final packageImports = imports.where((i) => !i.startsWith('dart:')).toList()..sort();
-
-    // Write dart: imports first
-    for (final i in dartImports) {
-      buffer.writeln("import '$i';");
-    }
-
-    if (dartImports.isNotEmpty && packageImports.isNotEmpty) {
-      buffer.writeln(); // blank line between dart: and package:
-    }
-
-    // Write package imports with aliases for generated imports
-    for (final i in packageImports) {
-      if (generatedImports.contains(i)) {
-        // Generate a safe alias like pkg_example
-        buffer.writeln("import '$i'${aliased ? ' as ${buildImportAlias(i)}' : ''};");
-      } else {
-        buffer.writeln("import '$i';");
-      }
-    }
-
-    buffer.writeln();
+    writeGeneratedImports(buffer, generatedImports.toMap((v) => v, (v) => []), aliased: aliased);
 
     spinner.stop(successMessage: '✅ Done writing ${generatedImports.length} import statements.');
   }
@@ -216,8 +189,7 @@ Future<void> main() async {
     final result = buffer.toString();
     result.trim();
 
-    await target.parent.create(recursive: true);
-    await target.writeAsString(result);
+    await writeGeneratedOutput(result, target);
 
     spinner.stop();
     logger.info("✅ Done writing generated buffer to ${target.path}");
@@ -244,40 +216,7 @@ Future<void> main() async {
     final spinner = Spinner('🔍 Writing header for $packageName...');
     spinner.start();
 
-    // ASCII art as raw string
-    const asciiArt = r'''
-// 🍃      _      _   _                __  ______  
-// 🍃     | | ___| |_| |    ___  __ _ / _| \ \ \ \ 
-// 🍃  _  | |/ _ \ __| |   / _ \/ _` | |_   \ \ \ \
-// 🍃 | |_| |  __/ |_| |__|  __/ (_| |  _|  / / / /
-// 🍃  \___/ \___|\__|_____\___|\__,_|_|   /_/_/_/ 
-// 🍃
-''';
-
-  buffer.writeln('''
-// ignore_for_file: unused_import, depend_on_referenced_packages, duplicate_import, deprecated_member_use, unnecessary_import
-//
-${asciiArt.trim()}
-//
-// AUTO-GENERATED $info for [$packageName] package
-// Do not edit manually.
-//
-// ---------------------------------------------------------------------------
-// JetLeaf Framework 🍃
-//
-// Copyright (c) ${DateTime.now().year} Hapnium & JetLeaf Contributors
-//
-// Licensed under the MIT License. See LICENSE file in the root of the jetleaf project
-//
-// This file is part of the JetLeaf Framework, a modern, modular backend
-// framework for Dart.
-//
-// For documentation and usage, visit:
-// https://jetleaf.hapnium.com/docs
-// ---------------------------------------------------------------------------
-// 
-// 🔧 Powered by Hapnium — the Dart backend engine 🍃
-''');
+    writeGeneratedHeader(buffer, packageName);
 
     spinner.stop();
     logger.info("✅ Done writing header for $packageName");

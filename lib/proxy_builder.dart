@@ -23,6 +23,7 @@ import 'package:path/path.dart' as p;
 import 'package:source_gen/source_gen.dart';
 
 import 'proxy_generator.dart';
+import 'src/utils.dart';
 
 /// {@template proxy_builder}
 /// # ProxyBuilder
@@ -220,33 +221,11 @@ class ProxyBuilder extends Builder {
     final inputPath = buildStep.inputId.path; // e.g. lib/core/config.dart
     final relPath = p.withoutExtension(inputPath);
     final outputPath = '${Constant.GENERATED_DIR_NAME}/${relPath.replaceFirst("lib", '${buildStep.inputId.package}_proxies')}_proxy.dart';
-    await _writeProxyToFile(output, outputPath);
+    await writeGeneratedOutput(output, File(outputPath));
     
     final outputId = inputId.changeExtension('.proxy.dart');
     await buildStep.writeAsString(outputId, output);
   }
-}
-
-/// Writes the generated proxy source code to the given [path].
-///
-/// This helper ensures that the target directory exists before writing,
-/// and trims trailing whitespace for cleaner diffs in version control.
-///
-/// - Creates parent directories recursively if missing.
-/// - Overwrites any existing file at the same location.
-/// - Intended for internal use by [ProxyBuilder].
-///
-/// Example:
-/// ```dart
-/// await _writeProxyToFile(generatedSource, '_jetleaf/lib/core/user_proxy.dart');
-/// ```
-///
-/// @param output The generated Dart source string to write.
-/// @param path The output file system path (absolute or relative).
-Future<void> _writeProxyToFile(String output, String path) async {
-  final file = File(path);
-  await file.parent.create(recursive: true);
-  await file.writeAsString(output.trim());
 }
 
 /// {@template proxy_builder_factory}
