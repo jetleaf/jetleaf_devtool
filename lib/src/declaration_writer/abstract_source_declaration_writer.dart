@@ -27,6 +27,4 @@ abstract class AbstractSourceDeclarationWriter extends AbstractFieldDeclarationW
     }
     return importsAndInstances;
   }
-
-  /// TODO: Handle LibraryDeclaration writing too
 }

@@ -211,6 +211,10 @@ void writeGeneratedImports(StringBuffer buffer, Map<String, List<String>> genera
 Future<List<String>> writeGeneratedAssets(List<Asset> assets, String outputPath, File outputFile) async {
   final buffer = StringBuffer();
   final instances = <String>[];
+  final assetList = assets.filterWhere((asset) {
+    final filePath = asset.getFilePath();
+    return filePath.contains(".env") || filePath.contains("/${Constant.RESOURCES_DIR_NAME}/");
+  });
 
   // Write header
   writeGeneratedHeader(buffer, outputPath);
@@ -220,8 +224,9 @@ Future<List<String>> writeGeneratedAssets(List<Asset> assets, String outputPath,
   }, aliased: false);
 
   final addedItem = <String>{};
+  final generatedNames = <String, String>{};
 
-  for (final asset in assets) {
+  for (final asset in assetList) {
     if (!addedItem.add(asset.getFilePath())) {
       continue;
     }
@@ -230,7 +235,13 @@ Future<List<String>> writeGeneratedAssets(List<Asset> assets, String outputPath,
     final sanitizedPackageName = sanitizePackageName(asset.getPackageName() ?? generatedPackageName);
     final sanitizedFileName = sanitizeFileName(asset.getFileName());
     final fileExtension = asset.getFilePath().split('.').last;
-    final className = 'Generative$sanitizedPackageName$sanitizedFileName${fileExtension.capitalizeFirst}Asset';
+    String className = 'Generative$sanitizedPackageName$sanitizedFileName${fileExtension.capitalizeFirst}Asset';
+
+    if (generatedNames[className] case final generated?) {
+      className = "$className${Uuid.timeBasedUuid().toCompactString()}";
+    } else {
+      generatedNames.put(className, "");
+    }
 
     final fileContentBytes = asset.getContentBytes();
     final byteListString = fileContentBytes.map((b) => '0x${b.toRadixString(16).padLeft(2, '0')}').join(', ');

@@ -1,6 +1,6 @@
 name: jetleaf_devtool
 description: Development tooling module for JetLeaf — provides utilities for debugging, runtime inspection, and project automation.
-version: 1.0.5
+version: 1.0.6
 
 homepage: https://jetleaf.hapnium.com
 repository: https://github.com/jetleaf/jetleaf_devtool
@@ -27,15 +27,15 @@ environment:
 dependencies:
   meta: ^1.17.0
   source_gen: ^4.0.2
-  analyzer: ^8.4.1
+  analyzer: ^9.0.0
   build: ^4.0.2
   frontend_server_client: ^4.0.0
   path: ^1.9.1
   vm_service: ^15.0.2
-  jetleaf_core: ^1.0.5
-  jetleaf_lang: ^1.0.5
-  jetleaf_logging: ^1.0.5
-  jetleaf_utils: ^1.0.5
+  jetleaf_core: ^1.0.6
+  jetleaf_lang: ^1.0.6
+  jetleaf_logging: ^1.0.6
+  jetleaf_utils: ^1.0.6
 
 dev_dependencies:
   test: ^1.25.0
