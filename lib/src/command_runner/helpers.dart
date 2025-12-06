@@ -49,7 +49,7 @@ Future<String> getRunningVersion() async {
   }
 
   // 2️⃣ Try global pub cache (e.g., ~/.pub-cache or %APPDATA%\Pub\Cache)
-  final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
+  final home = System.getEnvVar('HOME') ?? System.getEnvVar('USERPROFILE');
   final pubCacheDir = Platform.isWindows
       ? Directory('$home/AppData/Roaming/Pub/Cache')
       : Directory('$home/.pub-cache');
@@ -138,7 +138,7 @@ Future<File> _getEntryFile(List<String> args, CliLogger logger, Directory projec
 
   // 🔹 Prompt for entry file if missing
   if (noInteract) {
-    entry ??= _getValue(entry, Platform.environment['JL_ENTRY'], '');
+    entry ??= _getValue(entry, System.getEnvVar('JL_ENTRY'), '');
   } else {
     entry ??= prompt.get('Enter the entry file path', defaultsTo: '');
   }
@@ -202,7 +202,7 @@ String? _getArgValue(List<String> args, List<String> keys) {
 ///
 /// Example usage:
 /// ```dart
-/// final pathFolder = _getValue(cliArg, Platform.environment['JL_BUILD_PATH'], 'build/');
+/// final pathFolder = _getValue(cliArg, System.getEnvVar('JL_BUILD_PATH'], 'build/');
 /// ```
 /// In non-interactive mode, this ensures that the build can proceed without prompts.
 String _getValue(String? argValue, String? envVar, String defaultValue) {

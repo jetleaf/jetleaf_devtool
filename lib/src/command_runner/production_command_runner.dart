@@ -176,7 +176,7 @@ Examples:
       // Prompt for path file if not provided
       if (pathFolder == null || pathFolder.isEmpty) {
         if (noInteract) {
-          pathFolder = _getValue(pathFolder, Platform.environment['JL_PATH_FOLDER'], defaultPathFolder);
+          pathFolder = _getValue(pathFolder, System.getEnvVar('JL_PATH_FOLDER'), defaultPathFolder);
         } else {
           pathFolder = prompt.get('Enter the path folder (Eg. $defaultPathFolder/)', defaultsTo: '$defaultPathFolder/');
         }
@@ -187,14 +187,14 @@ Examples:
       // Prompt for name file if not provided
       if (name == null || name.isEmpty) {
         if (noInteract) {
-          name = _getValue(name, Platform.environment['JL_EXEC_NAME'], defaultExecName);
+          name = _getValue(name, System.getEnvVar('JL_EXEC_NAME'), defaultExecName);
         } else {
           name = prompt.get('Enter the executable file name (Eg. server)', defaultsTo: defaultExecName);
         }
       }
 
-      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? Platform.environment['JL_BUILD_EXCLUDE'] ?? '';
-      String included = _getArgValue(args, ['--include', '-in']) ?? Platform.environment['JL_BUILD_INCLUDE'] ?? '';
+      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? System.getEnvVar('JL_BUILD_EXCLUDE') ?? '';
+      String included = _getArgValue(args, ['--include', '-in']) ?? System.getEnvVar('JL_BUILD_INCLUDE') ?? '';
       List<String> excludeDirs = excluded.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(excluded);
       List<String> includeDirs = included.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(included);
 
