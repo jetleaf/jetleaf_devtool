@@ -102,8 +102,8 @@ Examples:
       // ------------------------------------------------------------
       final entrypoint = p.join(project.path, Constant.JETLEAF_GENERATED_DIR_NAME, '${packageName}_entry.dart');
 
-      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? Platform.environment['JL_BUILD_EXCLUDE'] ?? '';
-      String included = _getArgValue(args, ['--include', '-in']) ?? Platform.environment['JL_BUILD_INCLUDE'] ?? '';
+      String excluded = _getArgValue(args, ['--exclude', '-ed']) ?? System.getEnvVar('JL_BUILD_EXCLUDE') ?? '';
+      String included = _getArgValue(args, ['--include', '-in']) ?? System.getEnvVar('JL_BUILD_INCLUDE') ?? '';
       List<String> excludeDirs = excluded.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(excluded);
       List<String> includeDirs = included.isEmpty ? [] : StringUtils.commaDelimitedListToStringList(included);
 
