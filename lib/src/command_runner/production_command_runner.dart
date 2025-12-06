@@ -239,7 +239,7 @@ Examples:
         ],
         filesToExclude: excludeDirs.filter((e) => e.isNotEmpty).map((exclude) => File(p.isAbsolute(exclude.trim()) ? exclude.trim() : p.join(project.path, exclude.trim()))).toList(),
       );
-      FileUtility fileUtils = FileUtility(logger.info, logger.warn, logger.error, config, true);
+      FileUtility fileUtils = FileUtility(logger.info, logger.warn, logger.error, config, (file, uri) => true);
 
       await fileUtils.scanAllDependenciesForDartFiles(
         dartFiles,
