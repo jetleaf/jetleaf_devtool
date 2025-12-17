@@ -19,7 +19,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:frontend_server_client/frontend_server_client.dart';
-import 'package:jetleaf_lang/lang.dart';
+import 'package:jetleaf_lang/jetleaf_lang.dart';
 import 'package:jetleaf_utils/utils.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;

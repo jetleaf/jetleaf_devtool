@@ -104,7 +104,7 @@ abstract class ImportSupport extends FormatSupport {
     spinner.start();
 
     final files = await fileUtils.findDartFiles(project);
-    final generatedImports = await generateImports(mainEntryFile, packageName, logger, files.toList(), project, fileUtils);
+    final generatedImports = await generateImports(mainEntryFile, packageName, logger, files.getScannableDartFiles().toList(), project, fileUtils);
 
     if (generatedImports.isEmpty) {
       return await findAndGenerateImports(logger, project, mainEntryFile, packageName, excludes, includes, fileUtils);

@@ -30,6 +30,10 @@ class CliLogger {
     _log(message, color, emoji, "INFO");
   }
 
+  void onInfo(String message, bool updated) => info(message);
+  void onWarn(String message, bool updated) => warn(message);
+  void onError(String message, bool updated) => error(message);
+
   /// Logs a warning message.
   void warn(String message) {
     final color = LogCommons.levelColors[LogLevel.WARN]!;
