@@ -1,66 +1,116 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file.  
+This project follows a simple, human-readable changelog format inspired by
+[Keep a Changelog](https://keepachangelog.com/) and adheres to semantic versioning.
+
+---
+
+## [1.1.0]
+
+### Changed
+- `ProxyBuilder` and `ProxyGenerator` now use the `ExecutableArgument.optional` API.
+- Command runners now utilize `LocatedFiles` APIs.
+- `HelpCommandRunner` now provides hints for `jetleaf_build` command-line arguments.
+- Updated dependencies: `jetleaf_lang`, `jetleaf_core`, `jetleaf_logging`, `jetleaf_utils`.
+
+---
 
 ## [1.0.9]
 
-- Updated dependencies - `jetleaf_lang`, `jetleaf_core`, `jetleaf_logging`, and `jetleaf_utils`
+### Changed
+- Updated dependencies: `jetleaf_lang`, `jetleaf_core`, `jetleaf_logging`, `jetleaf_utils`.
+
+---
 
 ## [1.0.8]
 
-- Updated dependencies - `jetleaf_lang`, `jetleaf_core`, `jetleaf_logging`, and `jetleaf_utils`
+### Changed
+- Updated dependencies: `jetleaf_lang`, `jetleaf_core`, `jetleaf_logging`, `jetleaf_utils`.
+
+---
 
 ## [1.0.7]
 
-- Updated dependencies - `jetleaf_core`
+### Changed
+- Updated dependency: `jetleaf_core`.
+
+---
 
 ## [1.0.6]
 
-- Updated dependencies
-- Added declaration writing - not fully supported yet
+### Added
+- Declaration writing support _(experimental, not fully supported)_.
+
+### Changed
+- Updated dependencies.
+
+---
 
 ## [1.0.5]
 
-- Updated dependencies
+### Changed
+- Updated dependencies.
+
+---
 
 ## [1.0.4]
 
-- Updated dependencies
+### Changed
+- Updated dependencies.
+
+---
 
 ## [1.0.2+1]
 
-- Added check for production args
+### Added
+- Check for production arguments.
+
+---
 
 ## [1.0.2]
 
-- Updated dependencies
+### Changed
+- Updated dependencies.
+
+---
 
 ## [1.0.1]
 
-- Updated dependencies
+### Changed
+- Updated dependencies.
+
+---
 
 ## [1.0.0+1]
 
-Patch release: dependency alignment and small improvements.
+Patch release focused on dependency alignment and small improvements.
 
 ### Changed
+- Updated package dependencies and aligned with other JetLeaf modules.
 
-- Updated package dependencies and alignment with other JetLeaf modules.
+---
 
 ## [1.0.0]
 
 Initial release.
 
 ### Added
+- Development tooling for JetLeaf:
+  - Source generation helpers
+  - Runtime inspection utilities
+  - CLI tooling (`jl`)
+- Integration with analyzer and build tools for code generation and diagnostics.
 
-- Development tooling for JetLeaf: source generation helpers, runtime inspection utilities, and CLI tooling (`jl`).
-- Integration with analyzer and build tools to assist code generation and diagnostics.
+---
 
-### Links
+## Links
 
-- Homepage: https://jetleaf.hapnium.com
-- Documentation: https://jetleaf.hapnium.com/docs/devtool
-- Repository: https://github.com/jetleaf/jetleaf_devtool
-- Issues: https://github.com/jetleaf/jetleaf_devtool/issues
+- Homepage: https://jetleaf.hapnium.com  
+- Documentation: https://jetleaf.hapnium.com/docs/devtool  
+- Repository: https://github.com/jetleaf/jetleaf_devtool  
+- Issues: https://github.com/jetleaf/jetleaf_devtool/issues  
 
-Contributors: Hapnium & JetLeaf contributors
+---
+
+**Contributors:** Hapnium & JetLeaf contributors

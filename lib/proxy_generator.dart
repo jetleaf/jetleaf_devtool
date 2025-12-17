@@ -773,9 +773,9 @@ class ProxyGenerator implements Generator {
       buffer.writeln('      () async => delegate.$methodName$methodTypeParamsUse($invocationArgs),');
       buffer.writeln("      delegate,");
       buffer.writeln("      '$methodName',");
-      buffer.writeln('      ${aliasMap[_INTERCEPT_URI]!}.MethodArguments(');
-      buffer.writeln('        positionalArgs: [$positionalArgs],');
-      buffer.writeln('        namedArgs: {$namedArgsMap},');
+      buffer.writeln('      ${aliasMap[_LANG_URI]!}.ExecutableArgument.optional(');
+      buffer.writeln('        named: {$namedArgsMap},');
+      buffer.writeln('        positional: [$positionalArgs]');
       buffer.writeln('      ),');
       buffer.writeln('      $classType,');
       buffer.writeln('    );');

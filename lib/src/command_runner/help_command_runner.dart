@@ -118,6 +118,9 @@ Description:
 Available Commands:
 ${_buildUsagesFromOtherCommandRunner()}
 
+Optional Command-Line Args For Build:
+${BuildArg.getCommandLineUsage()}
+
 Run "jl <command> --help" for more information on a specific command.
 ''';
 

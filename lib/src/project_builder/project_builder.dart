@@ -14,7 +14,7 @@
 
 import 'dart:io';
 
-import 'package:jetleaf_lang/lang.dart';
+import 'package:jetleaf_lang/jetleaf_lang.dart';
 
 import '../command_runner/command_runner.dart';
 

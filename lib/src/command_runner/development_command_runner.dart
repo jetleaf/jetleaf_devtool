@@ -145,12 +145,13 @@ Examples:
         ],
         filesToExclude: excludeDirs.filter((e) => e.isNotEmpty).map((exclude) => File(p.isAbsolute(exclude.trim()) ? exclude.trim() : p.join(project.path, exclude.trim()))).toList(),
       );
-      FileUtility fileUtils = FileUtility(logger.info, logger.warn, logger.error, config, (file, uri) => true);
+      final located = LocatedFiles();
+      FileUtility fileUtils = FileUtility(logger.onInfo, logger.onWarn, logger.onError, config, (file, uri) => true);
 
       await fileUtils.scanAllDependenciesForDartFiles(
-        dartFiles,
+        located,
         config.filesToScan.map((f) => f.path).toSet(),
-        config.filesToExclude.map((f) => f.path).toSet()
+        config.filesToExclude.map((f) => f.path).toSet(),
       );
       
       final builder = DevelopmentProjectBuilder(File(entrypoint));

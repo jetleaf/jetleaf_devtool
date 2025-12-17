@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:build/build.dart';
 import 'package:jetleaf_lang/lang.dart';
+import 'package:jetleaf_lang/jetleaf_lang.dart' show getNonNecessaryPackages;
 import 'package:path/path.dart' as p;
 import 'package:source_gen/source_gen.dart';
 
