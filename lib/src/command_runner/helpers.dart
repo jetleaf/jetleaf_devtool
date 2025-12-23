@@ -41,73 +41,113 @@ part of 'command_runner.dart';
 /// This function never throws; if any lookup fails, it safely falls back to
 /// `"unknown"`.
 Future<String> getRunningVersion() async {
-  // 1️⃣ Try local pubspec.yaml (if running from source)
-  final localPubspec = File('pubspec.yaml');
-  if (await localPubspec.exists()) {
-    final version = _extractVersion(await localPubspec.readAsString());
-    if (version != null) return version;
-  }
+  // First, try to get version from the actual running executable
+  // This is the most reliable way
+  try {
+    final process = await Process.run('which', ['jl']);
+    
+    if (process.exitCode == 0) {
+      final jlPath = process.stdout.toString().trim();
+      if (jlPath.isNotEmpty) {
+        // Get the resolved symlink path
+        final resolvedPath = File(jlPath).resolveSymbolicLinksSync();
+        final jetleafDir = Directory(resolvedPath).parent.parent.parent;
+        final pubspec = File('${jetleafDir.path}/pubspec.lock');
 
-  // 2️⃣ Try global pub cache (e.g., ~/.pub-cache or %APPDATA%\Pub\Cache)
-  final home = System.getEnvVar('HOME') ?? System.getEnvVar('USERPROFILE');
-  final pubCacheDir = Platform.isWindows
-      ? Directory('$home/AppData/Roaming/Pub/Cache')
-      : Directory('$home/.pub-cache');
-
-  if (await pubCacheDir.exists()) {
-    final parser = YamlParser();
-    final jetleafDirs = pubCacheDir
-        .listSync(recursive: true)
-        .whereType<Directory>()
-        .where((d) => d.path.contains('jetleaf'));
-
-    for (final dir in jetleafDirs) {
-      final pubspec = File('${dir.path}/pubspec.yaml');
-      if (await pubspec.exists()) {
-        final asset = AssetResource(await pubspec.readAsString());
-        final parsed = parser.parseAsset(asset);
-        if (parsed['name'] == 'jetleaf') {
-          final version = _extractVersion(await pubspec.readAsString());
-          if (version != null) return version;
-        }
-      }
-    }
-  }
-
-  // 3️⃣ Try to resolve via package_config (if CLI is invoked via `dart run`)
-  final configFile = File('.dart_tool/package_config.json');
-  if (await configFile.exists()) {
-    final config = jsonDecode(await configFile.readAsString());
-    if (config is Map && config['packages'] is List) {
-      for (final pkg in config['packages']) {
-        if (pkg is Map && pkg['name'] == 'jetleaf') {
-          final pkgPath = pkg['rootUri'];
-          final pubspec = File('$pkgPath/pubspec.yaml');
-          if (await pubspec.exists()) {
-            final version = _extractVersion(await pubspec.readAsString());
-            if (version != null) return version;
+        if (await pubspec.exists()) {
+          final parsed = YamlParser().parse(await pubspec.readAsString());
+          // The structure might vary, but typically:
+          // packages:
+          //   jetleaf_devtool:
+          //     version: 1.1.2
+          if (parsed['packages'] is Map) {
+            final packages = parsed['packages'] as Map;
+            if (packages['jetleaf_devtool'] is Map) {
+              final pkg = packages['jetleaf_devtool'] as Map;
+              final version = pkg['version']?.toString();
+              if (version != null) return version;
+            }
           }
         }
       }
     }
+  } catch (e) {
+    print('Warning: Could not find jl executable: $e');
   }
 
-  // 4️⃣ Fallback to environment-defined version or unknown
-  return const String.fromEnvironment('JETLEAF_VERSION', defaultValue: 'unknown');
-}
+  // Try to find jetleaf_devtool in pub cache (the actual package you activated)
+  final home = System.getEnvVar('HOME') ?? System.getEnvVar('USERPROFILE');
+  if (home != null) {
+    final pubCacheDir = Platform.isWindows
+        ? Directory('$home/AppData/Roaming/Pub/Cache')
+        : Directory('$home/.pub-cache');
 
-String? _extractVersion(String content) {
-  // Matches versions like:
-  // 1.0.0
-  // 1.0.0+2
-  // 1.0.0-beta
-  // 1.0.0-beta+2
-  final match = RegExp(
-    r'^version:\s*([0-9]+\.[0-9]+\.[0-9]+(?:[-+][^\s]+)?)\s*$',
-    multiLine: true,
-  ).firstMatch(content);
+    if (await pubCacheDir.exists()) {
+      // Look specifically for jetleaf_devtool package
+      final globalsDir = Directory('${pubCacheDir.path}/global_packages');
+      
+      if (await globalsDir.exists()) {
+        final jetleafDevtoolDir = Directory('${globalsDir.path}/jetleaf_devtool');
+        
+        if (await jetleafDevtoolDir.exists()) {
+          // Check version in the package dir
+          final pubspec = File('${jetleafDevtoolDir.path}/pubspec.lock');
+          
+          if (await pubspec.exists()) {
+            try {
+              final parsed = YamlParser().parse(await pubspec.readAsString());
 
-  return match?.group(1)?.trim();
+              // The structure might vary, but typically:
+              // packages:
+              //   jetleaf_devtool:
+              //     version: 1.1.2
+              if (parsed['packages'] is Map) {
+                final packages = parsed['packages'] as Map;
+                if (packages['jetleaf_devtool'] is Map) {
+                  final pkg = packages['jetleaf_devtool'] as Map;
+                  final version = pkg['version']?.toString();
+                  if (version != null) return version;
+                }
+              }
+            } catch (_) {}
+          }
+        }
+      }
+
+      // Alternative: search all subdirectories
+      final jetleafDirs = await pubCacheDir
+          .list(recursive: true)
+          .where((entity) => entity is Directory)
+          .where((dir) => dir.path.contains('jetleaf_devtool'))
+          .toList();
+
+      for (final dir in jetleafDirs) {
+        final pubspec = File('${dir.path}/pubspec.lock');
+
+        if (await pubspec.exists()) {
+          try {
+            final parsed = YamlParser().parse(await pubspec.readAsString());
+
+            // The structure might vary, but typically:
+            // packages:
+            //   jetleaf_devtool:
+            //     version: 1.1.2
+            if (parsed['packages'] is Map) {
+              final packages = parsed['packages'] as Map;
+              if (packages['jetleaf_devtool'] is Map) {
+                final pkg = packages['jetleaf_devtool'] as Map;
+                final version = pkg['version']?.toString();
+                if (version != null) return version;
+              }
+            }
+          } catch (_) {}
+        }
+      }
+    }
+  }
+
+  // Fallback to environment variable (make sure this is set correctly during build)
+  return const String.fromEnvironment('JETLEAF_DEVTOOL_VERSION', defaultValue: 'unknown');
 }
 
 /// Resolves the application's main entry file from the provided [args].

@@ -22,8 +22,6 @@ final class ApplicationProjectWatcher extends GenerativeSupport implements Proje
   @override
   Future<void> watch(VmService vmService, File entryPoint, bool autoRebuild, Directory project, CliLogger logger) async {
     _vmService = vmService;
-    final runtime = GLOBAL_RUNTIME_PROVIDER;
-    print("Current runtime - $runtime");
 
     // Initialize the file watcher (monitors the current project root)
     final fileWatcher = ApplicationFileWatcher();

@@ -16,7 +16,7 @@ import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:jetleaf_lang/jetleaf_lang.dart';
+import 'package:jetleaf_lang/jetleaf_lang.dart' hide FunctionDeclaration;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 

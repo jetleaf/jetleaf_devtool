@@ -332,6 +332,9 @@ Future<List<String>> writeGeneratedPackages(List<Package> packages, String outpu
   for (final package in packages) {
     final sanitizedPackageName = sanitizePackageName(package.getName());
     final className = 'Generative${sanitizedPackageName}Package';
+    final jetleafDeps = package.getJetleafDependencies().map((dep) => "'$dep'").join(', ');
+    final deps = package.getDependencies().map((dep) => "'$dep'").join(', ');
+    final devDeps = package.getDevDependencies().map((dep) => "'$dep'").join(', ');
 
     buffer.write('''
 
@@ -346,7 +349,10 @@ Future<List<String>> writeGeneratedPackages(List<Package> packages, String outpu
 /// - **Language version:** `${package.getLanguageVersion()}`  
 /// - **Is root package:** `${package.getIsRootPackage()}`  
 /// - **File system path:** `${package.getFilePath()}`  
-/// - **Root URI:** `${package.getRootUri()}`  
+/// - **Root URI:** `${package.getRootUri()}`
+/// - **Jetleaf Dependencies:** `[$jetleafDeps]`
+/// - **Dependencies:** `[$deps]`
+/// - **Dev Dependencies:** `[$devDeps]`
 ///
 /// The constructor intentionally has **no arguments**, allowing JetLeaf to
 /// instantiate it reflectively at runtime using mirrors.
@@ -375,6 +381,15 @@ final class $className extends GenerativePackage {
 
   @override
   String? getRootUri() => '${package.getRootUri()}';
+
+  @override
+  Iterable<String> getJetleafDependencies() => [$jetleafDeps];
+
+  @override
+  Iterable<String> getDependencies() => [$deps];
+
+  @override
+  Iterable<String> getDevDependencies() => [$devDeps];
 }
 ''');
 
