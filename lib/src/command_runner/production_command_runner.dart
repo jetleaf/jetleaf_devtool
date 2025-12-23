@@ -251,6 +251,7 @@ Examples:
       final builder = ProductionProjectBuilder(compiler, outputPath, sourcePath);
       final finalArgs = args;
       finalArgs.add(Constant.JETLEAF_GENERATED_DIR_NAME);
+      System.fromArgs(args);
 
       final result = await builder.build(this, mainEntryFile, packageName, dartFiles.toList(), fileUtils, project, finalArgs);
 

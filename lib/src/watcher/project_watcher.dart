@@ -15,7 +15,6 @@
 import 'dart:io';
 
 // import 'package:frontend_server_client/frontend_server_client.dart';
-import 'package:jetleaf_lang/lang.dart';
 import 'package:vm_service/vm_service.dart';
 
 import '../command_runner/command_runner.dart';
