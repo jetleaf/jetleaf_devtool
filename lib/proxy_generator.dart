@@ -481,7 +481,7 @@ class ProxyGenerator implements Generator {
     final jetleafLangAlias = aliasMap[_LANG_URI];
     final classGettableReturn = jetleafLangAlias != null ? '$jetleafLangAlias.Class<$aliasedClassWithParams>(null, "$packageName")' : 'Class<$aliasedClassWithParams>(null, "$packageName")';
 
-    // ---- Header documentation and class declaration --------------------------
+    // ---- Header documentation --------------------------
     buffer.writeln('/// {@template ${proxyName.toLowerCase()}}');
     buffer.writeln('/// Proxy implementation for [$aliasedClass].');
     buffer.writeln('///');
@@ -501,6 +501,16 @@ class ProxyGenerator implements Generator {
     buffer.writeln('/// - [$aliasedClass]');
     buffer.writeln('///');
     buffer.writeln('/// {@endtemplate}');
+
+    // ---- Collect and emit class annotations ----------------------------
+    final classAnnotations = _extractClassAnnotations(cls, aliasMap);
+    if (classAnnotations.isNotEmpty) {
+      for (final annotation in classAnnotations) {
+        buffer.writeln(annotation);
+      }
+    }
+
+    // ---- Class declaration --------------------------
     buffer.writeln('final class $proxyName$classTypeParamsDecl with ${aliasMap[_INTERCEPT_URI]!}.Interceptable implements ${implementsParts.join(', ')} {');
 
     // ---- Delegate field ------------------------------------------------------
@@ -530,7 +540,7 @@ class ProxyGenerator implements Generator {
     buffer.writeln('  ///');
     buffer.writeln('  /// This field is marked as `late` because it is set after proxy');
     buffer.writeln('  /// construction but before any intercepted method is invoked.');
-    buffer.writeln('  late $jetleafLangAlias.Class<$aliasedClassWithParams> _class;');
+    buffer.writeln('  late final $jetleafLangAlias.Class<$aliasedClassWithParams> _class;');
     buffer.writeln();
     buffer.writeln('  /// Creates a new proxy wrapping the provided [delegate].');
     buffer.writeln('  ///');
@@ -769,7 +779,7 @@ class ProxyGenerator implements Generator {
     if (isInterceptable) {
       // tie type (inner generic for Future<T>)
       final tieType = _extractTieType(method.returnType, aliasMap, typeSubst);
-      buffer.writeln('    return this.when<$tieType>(');
+      buffer.writeln('    return when<$tieType>(');
       buffer.writeln('      () async => delegate.$methodName$methodTypeParamsUse($invocationArgs),');
       buffer.writeln("      delegate,");
       buffer.writeln("      '$methodName',");
@@ -855,6 +865,31 @@ class ProxyGenerator implements Generator {
     if (named.isNotEmpty) parts.add('{${named.join(', ')}}');
 
     return parts.join(', ');
+  }
+
+  /// Extracts annotation source code from a [ClassElement].
+  ///
+  /// Returns a list of annotation strings that can be directly emitted
+  /// in the generated code (e.g., '@Component()', '@Primary()').
+  List<String> _extractClassAnnotations(ClassElement element, Map<Uri, String> aliasMap) {
+    final annotations = <String>[];
+    
+    for (final metadata in element.metadata.annotations) {
+      final source = metadata.toSource();
+      
+      if (source.isNotEmpty) {
+        // if (metadata.element?.library?.uri case final uri?) {
+        //   if (aliasMap[uri] case final alias?) {
+        //     annotations.add("$alias.${source.trim()}");
+        //     continue;
+        //   }
+        // }
+
+        annotations.add(source.trim());
+      }
+    }
+    
+    return annotations;
   }
 
   /// Builds a comma-separated argument list used for invoking a proxied method.

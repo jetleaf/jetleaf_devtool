@@ -6,6 +6,18 @@ This project follows a simple, human-readable changelog format inspired by
 
 ---
 
+## [1.1.5]
+
+### Changed
+
+- Updated dependencies: `jetleaf_core`.
+
+### Added
+
+- Proxy classes may now include annotations from its proxied class. _Experimental_
+
+---
+
 ## [1.1.4]
 
 ### Changed
