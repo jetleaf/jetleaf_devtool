@@ -15,7 +15,7 @@ void writeGeneratedHeader(StringBuffer buffer, Object libraryName) {
 ''';
 
   buffer.writeln('''
-// ignore_for_file: unused_import, depend_on_referenced_packages, duplicate_import, deprecated_member_use, unnecessary_import
+// ignore_for_file: unused_import, depend_on_referenced_packages, duplicate_import, deprecated_member_use, unnecessary_import, prefer_final_fields, implementation_imports
 //
 ${asciiArt.trim()}
 //
